@@ -1,35 +1,25 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <stdio.h>
+#include "graphics.h"
+#include "world.h"
+#include <stdlib.h>
 
 GLFWwindow *window;
 
-void resize_framebuffer(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
-
 int main(int argc, char *argv[]) {
-    if (!glfwInit()) {
-        fprintf(stderr, "GLFW failed to init\n");
-        return 1;
+
+    // Stub to test world
+    asteroid_list_t *asteroids = create_asteroid_list();
+    asteroids = asteroid_list_cons(create_asteroid(0.3f, 0.4f, 0.2f), asteroids);
+    asteroids = asteroid_list_cons(create_asteroid(0.1f, 0.7f, 0.1f), asteroids);
+
+    asteroid_list_t *as = asteroids;
+    while(as->this != NULL) {
+        printf("(%f,%f,%f)\n", as->this->x, as->this->y, as->this->z);
+        as = as->next;
     }
 
-    window = glfwCreateWindow(1920, 1080, "Particles", NULL, NULL);
-    if (!window) {
-        fprintf(stderr, "Window failed to create\n");
-        glfwTerminate();
-        return 1;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, resize_framebuffer);
-
-    GLenum res = glewInit();
-    if (res != GLEW_OK) {
-        fprintf(stderr, "Error initializing GLEW: %s\n", glewGetErrorString(res));
-        return 1;
-    }
-
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    int error = intialize_window(&window);
+    if (error)
+        return error;
 
     while(!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
