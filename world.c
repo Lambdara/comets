@@ -1,11 +1,20 @@
 #include "world.h"
 
+vector3f_t make_vector3f(float x, float y, float z) {
+    vector3f_t vector = {x, y, z};
+    return vector;
+}
+
 asteroid_t *create_asteroid(float x, float y, float z) {
     asteroid_t *asteroid = malloc(sizeof(asteroid_t));
 
-    asteroid->x = x;
-    asteroid->y = y;
-    asteroid->z = z;
+    // Temporary simple generation
+    asteroid->vertices_length = 4;
+    asteroid->vertices = malloc(4 * sizeof(vector3f_t));
+    asteroid->vertices[0] = make_vector3f (x - 0.1, y - 0.1, z - 0.1);
+    asteroid->vertices[1] = make_vector3f (x + 0.1, y - 0.1, z - 0.1);
+    asteroid->vertices[2] = make_vector3f (x, y + 0.1, z - 0.1);
+    asteroid->vertices[3] = make_vector3f (x, y, z + 0.1);
 
     return asteroid;
 }
