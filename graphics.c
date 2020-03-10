@@ -66,12 +66,14 @@ void collect_vertices(asteroid_list_t* asteroids) {
 }
 
 void add_shaders() {
+    int length;
+
     // Read vertex shader from file
     char *vertex_shader_source;
     FILE *vertex_shader_file = fopen(VERTEX_SHADER_PATH, "rb");
     if (vertex_shader_file) {
         fseek(vertex_shader_file, 0, SEEK_END);
-        long length = ftell(vertex_shader_file);
+        length = (int) ftell(vertex_shader_file);
         fseek (vertex_shader_file, 0, SEEK_SET);
         vertex_shader_source = malloc (length);
         fread(vertex_shader_source, 1, length, vertex_shader_file);
@@ -85,7 +87,7 @@ void add_shaders() {
     // Compile vertex shader
     unsigned int vertex_shader;
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, &vertex_shader_content, NULL);
+    glShaderSource(vertex_shader, 1, &vertex_shader_content, &length);
     glCompileShader(vertex_shader);
     int  success;
     char info_log[512];
@@ -100,7 +102,7 @@ void add_shaders() {
     FILE *fragment_shader_file = fopen(FRAGMENT_SHADER_PATH, "rb");
     if (fragment_shader_file) {
         fseek (fragment_shader_file, 0, SEEK_END);
-        long length = ftell(fragment_shader_file);
+        length = (int) ftell(fragment_shader_file);
         fseek (fragment_shader_file, 0, SEEK_SET);
         fragment_shader_source = malloc(length);
         fread(fragment_shader_source, 1, length, vertex_shader_file);
@@ -114,11 +116,11 @@ void add_shaders() {
     // Compile fragment_shader
     unsigned int fragment_shader;
     fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, &fragment_shader_content, NULL);
+    glShaderSource(fragment_shader, 1, &fragment_shader_content, &length);
     glCompileShader(fragment_shader);
-    glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(vertex_shader, 512, NULL, info_log);
+        glGetShaderInfoLog(fragment_shader, 512, NULL, info_log);
         fprintf(stderr,"Fragment shader compilation error: %s\n", info_log);
     }
 
@@ -127,9 +129,9 @@ void add_shaders() {
     glAttachShader(shader_program, vertex_shader);
     glAttachShader(shader_program, fragment_shader);
     glLinkProgram(shader_program);
-    glGetProgramInfoLog(shader_program, 512, NULL, info_log);
+
     if (!success) {
-        glGetShaderInfoLog(vertex_shader, 512, NULL, info_log);
+        glGetProgramInfoLog(shader_program, 512, NULL, info_log);
         fprintf(stderr,"Shader program error: %s\n", info_log);
     }
 
