@@ -20,6 +20,8 @@ typedef struct asteroid_list_t {
     struct asteroid_list_t *next;
 } asteroid_list_t;
 
+vector3f_t camera_location;
+
 asteroid_t *create_asteroid(float, float, float);
 
 asteroid_list_t *create_asteroid_list();

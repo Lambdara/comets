@@ -5,27 +5,51 @@ int vertices_length;
 vector3f_t *vertices;
 int model_matrices_length;
 mat4 *model_matrices;
+mat4 view_matrix;
+mat4 projection_matrix;
+vec3 eye;
+vec3 dir;
+vec3 up;
 
 unsigned int shader_program;
 
 void render(GLFWwindow *window) {
+    eye[0] = camera_location.x;
+    eye[1] = camera_location.y;
+    eye[2] = camera_location.z;
+    dir[0] = 0.0f;
+    dir[1] = 0.0f;
+    dir[2] = -1.0f;
+    up[0] = 0.0f;
+    up[1] = 1.0f;
+    up[2] = 0.0f;
+    glm_look(eye, dir, up, view_matrix);
+
+    glm_perspective(80.0f, 16.0f/9.0f, 1.0f, 10.0f, projection_matrix);
+
     glClear(GL_COLOR_BUFFER_BIT);
 
-    GLuint *vbos;
+    GLuint *vbos = malloc(sizeof(GLuint)*asteroids_length);
     glGenBuffers(asteroids_length, vbos);
 
     unsigned int model_matrix_loc = glGetUniformLocation(shader_program, "model_matrix");
+    unsigned int view_matrix_loc = glGetUniformLocation(shader_program, "view_matrix");
+    unsigned int projection_matrix_loc = glGetUniformLocation(shader_program, "projection_matrix");
 
+    glEnableVertexAttribArray(0);
     for (int i = 0; i < asteroids_length; i++) {
         #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
         glBindBuffer(GL_ARRAY_BUFFER, vbos[i]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f_t)*12, &(vertices[i*12]), GL_DYNAMIC_DRAW);
-        glEnableVertexAttribArray(0);
+
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
         glUniformMatrix4fv(model_matrix_loc, 1, GL_FALSE, model_matrices[i][0]);
+        glUniformMatrix4fv(view_matrix_loc, 1, GL_FALSE, view_matrix[0]);
+        glUniformMatrix4fv(projection_matrix_loc, 1, GL_FALSE, projection_matrix[0]);
         glDrawArrays(GL_TRIANGLES, 0, vertices_length);
-        glDisableVertexAttribArray(0);
     }
+
+    glDisableVertexAttribArray(0);
     glfwSwapBuffers(window);
     glDeleteBuffers(asteroids_length, vbos);
 }
