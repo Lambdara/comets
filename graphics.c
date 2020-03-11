@@ -25,7 +25,7 @@ void render(GLFWwindow *window) {
     up[2] = 0.0f;
     glm_look(eye, dir, up, view_matrix);
 
-    glm_perspective(80.0f, 16.0f/9.0f, 1.0f, 10.0f, projection_matrix);
+    glm_perspective(3.14159265358979323f/4.0f, 16.0f/9.0f, 1.0f, 10.0f, projection_matrix);
 
     glClear(GL_COLOR_BUFFER_BIT);
 
