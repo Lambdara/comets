@@ -3,8 +3,8 @@
 int asteroids_length;
 int vertices_length;
 vector3f_t *vertices;
-int translations_length;
-mat4 *translations;
+int model_matrices_length;
+mat4 *model_matrices;
 
 unsigned int shader_program;
 
@@ -14,7 +14,7 @@ void render(GLFWwindow *window) {
     GLuint *vbos;
     glGenBuffers(asteroids_length, vbos);
 
-    unsigned int translation_loc = glGetUniformLocation(shader_program, "translation");
+    unsigned int model_matrix_loc = glGetUniformLocation(shader_program, "model_matrix");
 
     for (int i = 0; i < asteroids_length; i++) {
         #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
@@ -22,7 +22,7 @@ void render(GLFWwindow *window) {
         glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f_t)*12, &(vertices[i*12]), GL_DYNAMIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-        glUniformMatrix4fv(translation_loc, 1, GL_FALSE, translations[i][0]);
+        glUniformMatrix4fv(model_matrix_loc, 1, GL_FALSE, model_matrices[i][0]);
         glDrawArrays(GL_TRIANGLES, 0, vertices_length);
         glDisableVertexAttribArray(0);
     }
@@ -30,7 +30,7 @@ void render(GLFWwindow *window) {
     glDeleteBuffers(asteroids_length, vbos);
 }
 
-void asteroid_translation_matrix (asteroid_t* asteroid, mat4 matrix) {
+void asteroid_model_matrix (asteroid_t* asteroid, mat4 matrix) {
     glm_mat4_identity(matrix);
     glm_translate(matrix, (vec3) {asteroid->x, asteroid->y, asteroid->z});
 }
@@ -45,7 +45,7 @@ void collect_vertices(asteroid_list_t* asteroids) {
 
     vertices_length = asteroids_length * 12;
     vertices = malloc(sizeof(vector3f_t)*vertices_length);
-    translations = malloc(sizeof(mat4)*asteroids_length);
+    model_matrices = malloc(sizeof(mat4)*asteroids_length);
 
     asteroids_head = asteroids;
     int v = 0; // Index in vertex array
@@ -69,7 +69,7 @@ void collect_vertices(asteroid_list_t* asteroids) {
         vertices[v++] = asteroid->vertices[2];
         vertices[v++] = asteroid->vertices[3];
 
-        asteroid_translation_matrix(asteroids_head->this, translations[m++]);
+        asteroid_model_matrix(asteroids_head->this, model_matrices[m++]);
 
         asteroids_head = asteroids_head->next;
     }
