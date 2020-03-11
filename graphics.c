@@ -5,7 +5,6 @@ int vertices_length;
 vector3f_t *vertices;
 int translations_length;
 mat4 *translations;
-int *vertex_translations;
 
 unsigned int shader_program;
 
@@ -45,7 +44,6 @@ void collect_vertices(asteroid_list_t* asteroids) {
 
     vertices_length = asteroids_length * 12;
     vertices = malloc(sizeof(vector3f_t)*vertices_length);
-    vertex_translations = malloc(sizeof(int)*vertices_length);
     translations = malloc(sizeof(mat4)*asteroids_length);
 
     asteroids_head = asteroids;
@@ -55,32 +53,20 @@ void collect_vertices(asteroid_list_t* asteroids) {
         asteroid_t *asteroid = asteroids_head->this;
 
         vertices[v++] = asteroid->vertices[0];
-        vertex_translations[v] = m;
         vertices[v++] = asteroid->vertices[1];
-        vertex_translations[v] = m;
         vertices[v++] = asteroid->vertices[2];
-        vertex_translations[v] = m;
 
         vertices[v++] = asteroid->vertices[0];
-        vertex_translations[v] = m;
         vertices[v++] = asteroid->vertices[1];
-        vertex_translations[v] = m;
         vertices[v++] = asteroid->vertices[3];
-        vertex_translations[v] = m;
 
         vertices[v++] = asteroid->vertices[0];
-        vertex_translations[v] = m;
         vertices[v++] = asteroid->vertices[2];
-        vertex_translations[v] = m;
         vertices[v++] = asteroid->vertices[3];
-        vertex_translations[v] = m;
 
         vertices[v++] = asteroid->vertices[1];
-        vertex_translations[v] = m;
         vertices[v++] = asteroid->vertices[2];
-        vertex_translations[v] = m;
         vertices[v++] = asteroid->vertices[3];
-        vertex_translations[v] = m;
 
         asteroid_translation_matrix(asteroids_head->this, translations[m++]);
 
