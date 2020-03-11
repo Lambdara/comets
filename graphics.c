@@ -5,24 +5,15 @@ int vertices_length;
 vector3f_t *vertices;
 int model_matrices_length;
 mat4 *model_matrices;
-mat4 view_matrix;
-mat4 projection_matrix;
-vec3 eye;
-vec3 dir;
-vec3 up;
-
 unsigned int shader_program;
 
 void render(GLFWwindow *window) {
-    eye[0] = camera_location.x;
-    eye[1] = camera_location.y;
-    eye[2] = camera_location.z;
-    dir[0] = 0.0f;
-    dir[1] = 0.0f;
-    dir[2] = -1.0f;
-    up[0] = 0.0f;
-    up[1] = 1.0f;
-    up[2] = 0.0f;
+    mat4 view_matrix;
+    mat4 projection_matrix;
+
+    vec3 eye = {camera_location.x, camera_location.y, camera_location.z};
+    vec3 dir = {0.0f, 0.0f, -1.0f};
+    vec3 up = {0.0f, 1.0f, 0.0f};
     glm_look(eye, dir, up, view_matrix);
 
     glm_perspective(3.14159265358979323f/4.0f, 16.0f/9.0f, 1.0f, 10.0f, projection_matrix);
