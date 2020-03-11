@@ -16,7 +16,8 @@ void render(GLFWwindow *window) {
 
     unsigned int translation_loc = glGetUniformLocation(shader_program, "translation");
 
-    for (int i = 0; i < asteroids_length; i++ ) {
+    for (int i = 0; i < asteroids_length; i++) {
+        #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
         glBindBuffer(GL_ARRAY_BUFFER, vbos[i]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f_t)*12, &(vertices[i*12]), GL_DYNAMIC_DRAW);
         glEnableVertexAttribArray(0);
