@@ -12,11 +12,11 @@ void render(GLFWwindow *window) {
     mat4 projection_matrix;
 
     vec3 eye = {camera_location.x, camera_location.y, camera_location.z};
-    vec3 dir = {0.0f, 0.0f, -1.0f};
+    vec3 dir = {0.0f, 0.0f, 1.0f};
     vec3 up = {0.0f, 1.0f, 0.0f};
     glm_look(eye, dir, up, view_matrix);
 
-    glm_perspective(3.14159265358979323f/4.0f, 16.0f/9.0f, 1.0f, 10.0f, projection_matrix);
+    glm_perspective(3.14159265358979323f/4.0f, 16.0f/9.0f, 0.1f, 100.0f, projection_matrix);
 
     glClear(GL_COLOR_BUFFER_BIT);
 
