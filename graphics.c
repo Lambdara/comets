@@ -1,5 +1,6 @@
 #include "graphics.h"
 
+int asteroids_length;
 int vertices_length;
 vector3f_t *vertices;
 int translations_length;
@@ -12,11 +13,11 @@ void render(GLFWwindow *window) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     GLuint *vbos;
-    glGenBuffers(vertices_length/12, vbos);
+    glGenBuffers(asteroids_length, vbos);
 
     unsigned int translation_loc = glGetUniformLocation(shader_program, "translation");
 
-    for (int i = 0; i < vertices_length/12; i++ ) {
+    for (int i = 0; i < asteroids_length; i++ ) {
         glBindBuffer(GL_ARRAY_BUFFER, vbos[i]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f_t)*12, &(vertices[i*12]), GL_DYNAMIC_DRAW);
         glEnableVertexAttribArray(0);
@@ -26,7 +27,7 @@ void render(GLFWwindow *window) {
         glDisableVertexAttribArray(0);
     }
     glfwSwapBuffers(window);
-    glDeleteBuffers(vertices_length/12, vbos);
+    glDeleteBuffers(asteroids_length, vbos);
 }
 
 void asteroid_translation_matrix (asteroid_t* asteroid, mat4 matrix) {
@@ -35,7 +36,7 @@ void asteroid_translation_matrix (asteroid_t* asteroid, mat4 matrix) {
 }
 
 void collect_vertices(asteroid_list_t* asteroids) {
-    int asteroids_length = 0;
+    asteroids_length = 0;
     asteroid_list_t *asteroids_head = asteroids;
     while (asteroids_head->next != NULL){
         asteroids_length++;
