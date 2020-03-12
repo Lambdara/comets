@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     float camera_speed = 10.0f;
     camera_location.x = 0.5f;
     camera_location.y = 0.0f;
-    camera_location.z = -5.0f;
+    camera_location.z = -20.0f;
     camera_angle = 0.0;
 
     asteroids = create_asteroid_list();
