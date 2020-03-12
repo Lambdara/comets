@@ -8,6 +8,7 @@
 #include <GLFW/glfw3.h>
 #include <cglm/cglm.h>
 #include <stdio.h>
+#include <math.h>
 #include "world.h"
 
 int intialize_window(GLFWwindow **);

@@ -21,6 +21,7 @@ typedef struct asteroid_list_t {
 } asteroid_list_t;
 
 vector3f_t camera_location;
+float camera_angle;
 
 asteroid_t *create_asteroid(float, float, float);
 
