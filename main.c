@@ -57,6 +57,12 @@ int main(int argc, char *argv[]) {
             camera_angle -= (float) delta;
             camera_angle = fmod(camera_angle, 3.14159f * 2);
         }
+        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+            camera_location.y -= (float) delta * camera_speed;
+        }
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+            camera_location.y += (float) delta * camera_speed;
+        }
 
         collect_vertices(asteroids);
         render(window);
