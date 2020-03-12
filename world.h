@@ -12,6 +12,7 @@ typedef struct {
 typedef struct {
     int vertices_length;
     vector3f_t *vertices;
+    vector3f_t *normals;
     float x, y, z;
 } asteroid_t;
 

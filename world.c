@@ -1,7 +1,24 @@
 #include "world.h"
+#include <stdio.h>
 
 vector3f_t make_vector3f(float x, float y, float z) {
     vector3f_t vector = {x, y, z};
+    return vector;
+}
+
+vector3f_t vector3f_cross(vector3f_t a, vector3f_t b) {
+    vector3f_t vector = {a.y * b.z - a.z * b.y,
+                         a.z * b.x - a.x * b.z,
+                         a.x * b.y - a.y * b.x
+    };
+    return vector;
+}
+
+vector3f_t vector3f_minus(vector3f_t a, vector3f_t b) {
+    vector3f_t vector = {a.x - b.x,
+                         a.y - b.y,
+                         a.z - b.z
+    };
     return vector;
 }
 
@@ -15,6 +32,29 @@ asteroid_t *create_asteroid(float x, float y, float z) {
     asteroid->vertices[1] = make_vector3f (0.5, -0.5, -0.5);
     asteroid->vertices[2] = make_vector3f (0, 0.5, -0.5);
     asteroid->vertices[3] = make_vector3f (0, 0, 0.5);
+    asteroid->normals = malloc(4 * sizeof(vector3f_t));
+    asteroid->normals[0] = vector3f_cross(vector3f_minus(asteroid->vertices[2], asteroid->vertices[1]),
+                                          vector3f_minus(asteroid->vertices[3], asteroid->vertices[1]));
+    asteroid->normals[1] = vector3f_cross(vector3f_minus(asteroid->vertices[3], asteroid->vertices[2]),
+                                          vector3f_minus(asteroid->vertices[0], asteroid->vertices[2]));
+    asteroid->normals[2] = vector3f_cross(vector3f_minus(asteroid->vertices[0], asteroid->vertices[3]),
+                                          vector3f_minus(asteroid->vertices[1], asteroid->vertices[3]));
+    asteroid->normals[3] = vector3f_cross(vector3f_minus(asteroid->vertices[1], asteroid->vertices[0]),
+                                          vector3f_minus(asteroid->vertices[2], asteroid->vertices[0]));
+    printf("normals: (%f, %f, %f), (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)\n",
+           asteroid->normals[0].x,
+           asteroid->normals[0].y,
+           asteroid->normals[0].z,
+           asteroid->normals[1].x,
+           asteroid->normals[1].y,
+           asteroid->normals[1].z,
+           asteroid->normals[2].x,
+           asteroid->normals[2].y,
+           asteroid->normals[2].z,
+           asteroid->normals[3].x,
+           asteroid->normals[3].y,
+           asteroid->normals[3].z
+           );
     asteroid->x = x;
     asteroid->y = y;
     asteroid->z = z;
