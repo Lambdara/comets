@@ -31,6 +31,7 @@ void render(GLFWwindow *window) {
     unsigned int projection_matrix_loc = glGetUniformLocation(shader_program, "projection_matrix");
 
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
     for (int i = 0; i < asteroids_length; i++) {
         #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
         glBindBuffer(GL_ARRAY_BUFFER, vbos[i]);
@@ -48,6 +49,7 @@ void render(GLFWwindow *window) {
     }
 
     glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
     glfwSwapBuffers(window);
     glDeleteBuffers(asteroids_length, vbos);
     glDeleteBuffers(asteroids_length, nbos);
