@@ -1,12 +1,14 @@
 #include "graphics.h"
 #include "world.h"
 #include <stdlib.h>
+#include <time.h>
 
 GLFWwindow *window;
 
 asteroid_list_t *asteroids;
 
 int main(int argc, char *argv[]) {
+    srand(time(0));
 
     float camera_speed = 10.0f;
     camera_location.x = 0.5f;
