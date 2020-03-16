@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
     camera_angle = 0.0;
 
     asteroids = create_asteroid_list();
-    asteroids = asteroid_list_cons(create_asteroid(-0.5f, -0.2f, 0.0f), asteroids);
-    asteroids = asteroid_list_cons(create_asteroid(0.3f, 0.1f, 0.1f), asteroids);
+    asteroids = asteroid_list_cons(create_asteroid(-3.0f, 1.0f, 0.0f), asteroids);
+    asteroids = asteroid_list_cons(create_asteroid(2.0f, -1.0f, 2.0f), asteroids);
 
 
     int error = intialize_window(&window);
