@@ -41,20 +41,6 @@ asteroid_t *create_asteroid(float x, float y, float z) {
                                           vector3f_minus(asteroid->vertices[1], asteroid->vertices[3]));
     asteroid->normals[3] = vector3f_cross(vector3f_minus(asteroid->vertices[1], asteroid->vertices[0]),
                                           vector3f_minus(asteroid->vertices[2], asteroid->vertices[0]));
-    printf("normals: (%f, %f, %f), (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)\n",
-           asteroid->normals[0].x,
-           asteroid->normals[0].y,
-           asteroid->normals[0].z,
-           asteroid->normals[1].x,
-           asteroid->normals[1].y,
-           asteroid->normals[1].z,
-           asteroid->normals[2].x,
-           asteroid->normals[2].y,
-           asteroid->normals[2].z,
-           asteroid->normals[3].x,
-           asteroid->normals[3].y,
-           asteroid->normals[3].z
-           );
     asteroid->x = x;
     asteroid->y = y;
     asteroid->z = z;
