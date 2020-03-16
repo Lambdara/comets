@@ -19,7 +19,7 @@ void render(GLFWwindow *window) {
 
     glm_perspective(3.14159265358979323f/4.0f, 16.0f/9.0f, 0.1f, 100.0f, projection_matrix);
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     GLuint *vbos = malloc(sizeof(GLuint)*asteroids_length);
     GLuint *nbos = malloc(sizeof(GLuint)*asteroids_length);
@@ -182,6 +182,7 @@ void add_shaders() {
     }
 
     glUseProgram(shader_program);
+    glEnable(GL_DEPTH_TEST);
 }
 
 
