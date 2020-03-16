@@ -11,7 +11,9 @@ void main()
 
     vec3 light_direction = normalize(light_position - fragment_position);
 
-    float light = max(dot(light_direction, fragment_normal), dot(light_direction, -fragment_normal));
+    float diffuse_light = max(dot(light_direction, fragment_normal), 0);
+    float ambient_light = 0.2;
+    float light = diffuse_light + ambient_light;
 
-    pixel_color = vec4(1.0, 0.0, light, 1.0);
+    pixel_color = light*vec4(0.8, 0.8, 0.8, 1.0);
 }

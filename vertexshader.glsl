@@ -11,7 +11,8 @@ uniform mat4 projection_matrix;
 
 void main()
 {
-    gl_Position = projection_matrix * view_matrix * model_matrix * vec4(position, 1.0);
-    fragment_position = vec3(gl_Position);
+    vec4 fragment_position_vec4 = model_matrix * vec4(position, 1.0);
+    gl_Position = projection_matrix * view_matrix * fragment_position_vec4;
+    fragment_position = vec3(fragment_position_vec4);
     fragment_normal = normalize(normal);
 }
