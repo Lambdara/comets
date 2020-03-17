@@ -79,33 +79,10 @@ void collect_vertices(asteroid_list_t* asteroids) {
     while (asteroids_head->this != NULL) {
         asteroid_t *asteroid = asteroids_head->this;
 
-        normals[v] = asteroid->normals[0];
-        vertices[v++] = asteroid->vertices[0];
-        normals[v] = asteroid->normals[1];
-        vertices[v++] = asteroid->vertices[1];
-        normals[v] = asteroid->normals[2];
-        vertices[v++] = asteroid->vertices[2];
-
-        normals[v] = asteroid->normals[0];
-        vertices[v++] = asteroid->vertices[0];
-        normals[v] = asteroid->normals[1];
-        vertices[v++] = asteroid->vertices[1];
-        normals[v] = asteroid->normals[3];
-        vertices[v++] = asteroid->vertices[3];
-
-        normals[v] = asteroid->normals[0];
-        vertices[v++] = asteroid->vertices[0];
-        normals[v] = asteroid->normals[2];
-        vertices[v++] = asteroid->vertices[2];
-        normals[v] = asteroid->normals[3];
-        vertices[v++] = asteroid->vertices[3];
-
-        normals[v] = asteroid->normals[1];
-        vertices[v++] = asteroid->vertices[1];
-        normals[v] = asteroid->normals[2];
-        vertices[v++] = asteroid->vertices[2];
-        normals[v] = asteroid->normals[3];
-        vertices[v++] = asteroid->vertices[3];
+        for (int i = 0; i < 12; i++) {
+            normals[v] = asteroid->normals[i];
+            vertices[v++] = asteroid->vertices[i];
+        }
 
         asteroid_model_matrix(asteroids_head->this, model_matrices[m++]);
 

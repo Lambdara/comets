@@ -17,8 +17,26 @@ int main(int argc, char *argv[]) {
     camera_angle = 0.0;
 
     asteroids = create_asteroid_list();
-    asteroids = asteroid_list_cons(create_asteroid(-3.0f, 1.0f, 0.0f), asteroids);
-    asteroids = asteroid_list_cons(create_asteroid(2.0f, -1.0f, 2.0f), asteroids);
+    for (int x = 0; x < 5; x++) {
+        for (int y = 0; y < 5; y++) {
+            asteroids = asteroid_list_cons(create_asteroid((x-2)*2.0f, 0.0f, (y-2)*2.0f), asteroids);
+        }
+    }
+    asteroid_t *sun = create_asteroid(10000.0f, 0.0f, 0.0f);
+
+    for (int i = 0; i < 12; i++) {
+        sun->normals[i].x = -sun->normals[i].x;
+        sun->normals[i].y = -sun->normals[i].y;
+        sun->normals[i].z = -sun->normals[i].z;
+        sun->vertices[i].x = 100.0f*sun->vertices[i].x;
+        sun->vertices[i].y = 100.0f*sun->vertices[i].y;
+        sun->vertices[i].z = 100.0f*sun->vertices[i].z;
+    }
+
+    asteroids = asteroid_list_cons(sun, asteroids);
+
+    /* asteroids = asteroid_list_cons(create_asteroid(-3.0f, 1.0f, 0.0f), asteroids); */
+    /* asteroids = asteroid_list_cons(create_asteroid(2.0f, -1.0f, 2.0f), asteroids); */
 
 
     int error = intialize_window(&window);
