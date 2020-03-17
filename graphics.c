@@ -17,7 +17,7 @@ void render(GLFWwindow *window) {
     vec3 up = {0.0f, 1.0f, 0.0f};
     glm_look(eye, dir, up, view_matrix);
 
-    glm_perspective(3.14159265358979323f/4.0f, 16.0f/9.0f, 0.1f, 100.0f, projection_matrix);
+    glm_perspective(3.14159265358979323f/2.0f, 16.0f/9.0f, 0.1f, 100000.0f, projection_matrix);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
