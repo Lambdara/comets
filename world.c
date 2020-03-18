@@ -54,6 +54,12 @@ asteroid_t *create_asteroid(float x, float y, float z) {
     asteroid->y = y;
     asteroid->z = z;
 
+    asteroid->rotation_speed = rand() / (float) RAND_MAX * 3.14159;
+    for (int i = 0; i < 3; i++)
+        asteroid->axis[i] = rand() / (float) RAND_MAX;
+    glm_vec3_normalize(asteroid->axis);
+    asteroid->angle = rand() / (float) RAND_MAX * 3.14159 * 2;
+
     return asteroid;
 }
 

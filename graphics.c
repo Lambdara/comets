@@ -58,6 +58,7 @@ void render(GLFWwindow *window) {
 void asteroid_model_matrix (asteroid_t* asteroid, mat4 matrix) {
     glm_mat4_identity(matrix);
     glm_translate(matrix, (vec3) {asteroid->x, asteroid->y, asteroid->z});
+    glm_rotate(matrix, asteroid->angle, asteroid->axis);
 }
 
 void collect_vertices(asteroid_list_t* asteroids) {

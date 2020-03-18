@@ -9,6 +9,9 @@ typedef struct {
     vec3 *vertices;
     vec3 *normals;
     float x, y, z;
+    float rotation_speed;
+    float angle;
+    vec3 axis;
 } asteroid_t;
 
 typedef struct asteroid_list_t {

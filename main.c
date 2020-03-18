@@ -48,6 +48,13 @@ int main(int argc, char *argv[]) {
         delta = new_time - last_time;
         last_time = new_time;
 
+        // Handle rotations
+        asteroid_list_t *asteroids_head = asteroids;
+        while (asteroids_head->next != NULL){
+            asteroids_head->this->angle += asteroids_head->this->rotation_speed * delta;
+            asteroids_head = asteroids_head->next;
+        }
+
         // Handle keys
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
             camera_location[2] -= (float) delta * camera_speed * cos(camera_angle);
