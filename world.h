@@ -2,17 +2,12 @@
 #define WORLD_H
 
 #include <stdlib.h>
-
-typedef struct {
-    float x;
-    float y;
-    float z;
-} vector3f_t;
+#include <cglm/cglm.h>
 
 typedef struct {
     int vertices_length;
-    vector3f_t *vertices;
-    vector3f_t *normals;
+    vec3 *vertices;
+    vec3 *normals;
     float x, y, z;
 } asteroid_t;
 
@@ -21,7 +16,7 @@ typedef struct asteroid_list_t {
     struct asteroid_list_t *next;
 } asteroid_list_t;
 
-vector3f_t camera_location;
+vec3 camera_location;
 float camera_angle;
 
 asteroid_t *create_asteroid(float, float, float);

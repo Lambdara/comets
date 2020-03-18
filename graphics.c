@@ -2,8 +2,8 @@
 
 int asteroids_length;
 int vertices_length;
-vector3f_t *vertices;
-vector3f_t *normals;
+vec3 *vertices;
+vec3 *normals;
 int model_matrices_length;
 mat4 *model_matrices;
 unsigned int shader_program;
@@ -12,7 +12,7 @@ void render(GLFWwindow *window) {
     mat4 view_matrix;
     mat4 projection_matrix;
 
-    vec3 eye = {camera_location.x, camera_location.y, camera_location.z};
+    vec3 eye = {camera_location[0], camera_location[1], camera_location[2]};
     vec3 dir = {sin(camera_angle), 0.0f, -cos(camera_angle)};
     vec3 up = {0.0f, 1.0f, 0.0f};
     glm_look(eye, dir, up, view_matrix);
@@ -35,11 +35,11 @@ void render(GLFWwindow *window) {
     for (int i = 0; i < asteroids_length; i++) {
         #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
         glBindBuffer(GL_ARRAY_BUFFER, vbos[i]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f_t)*12, &(vertices[i*12]), GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*12, &(vertices[i*12]), GL_DYNAMIC_DRAW);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
         glBindBuffer(GL_ARRAY_BUFFER, nbos[i]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f_t)*12, &(normals[i*12]), GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*12, &(normals[i*12]), GL_DYNAMIC_DRAW);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
    
         glUniformMatrix4fv(model_matrix_loc, 1, GL_FALSE, model_matrices[i][0]);
@@ -69,8 +69,8 @@ void collect_vertices(asteroid_list_t* asteroids) {
     }
 
     vertices_length = asteroids_length * 12;
-    vertices = malloc(sizeof(vector3f_t)*vertices_length);
-    normals = malloc(sizeof(vector3f_t)*vertices_length);
+    vertices = malloc(sizeof(float)*3*vertices_length);
+    normals = malloc(sizeof(float)*3*vertices_length);
     model_matrices = malloc(sizeof(mat4)*asteroids_length);
 
     asteroids_head = asteroids;
@@ -80,8 +80,9 @@ void collect_vertices(asteroid_list_t* asteroids) {
         asteroid_t *asteroid = asteroids_head->this;
 
         for (int i = 0; i < 12; i++) {
-            normals[v] = asteroid->normals[i];
-            vertices[v++] = asteroid->vertices[i];
+            glm_vec3_copy(asteroid->normals[i], normals[v]);
+            glm_vec3_copy(asteroid->vertices[i], vertices[v]);
+            v++;
         }
 
         asteroid_model_matrix(asteroids_head->this, model_matrices[m++]);
