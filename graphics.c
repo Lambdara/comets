@@ -13,7 +13,7 @@ void render(GLFWwindow *window) {
     mat4 projection_matrix;
 
     vec3 eye = {camera_location.x, camera_location.y, camera_location.z};
-    vec3 dir = {sin(camera_angle), 0.0f, cos(camera_angle)};
+    vec3 dir = {sin(camera_angle), 0.0f, -cos(camera_angle)};
     vec3 up = {0.0f, 1.0f, 0.0f};
     glm_look(eye, dir, up, view_matrix);
 
