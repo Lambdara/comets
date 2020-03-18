@@ -37,33 +37,18 @@ asteroid_t *create_asteroid(float x, float y, float z) {
     vertices[3][1] = -(vertices[0][1] + vertices[1][1] + vertices[2][1])/3.0f;
     vertices[3][2] = -(vertices[0][2] + vertices[1][2] + vertices[2][2])/3.0f;
 
-    glm_vec3_copy(vertices[0], asteroid->vertices[0]);
-    glm_vec3_copy(vertices[1], asteroid->vertices[1]);
-    glm_vec3_copy(vertices[2], asteroid->vertices[2]);
-    for (int i = 0; i < 3; i++) {
-        make_normal(vertices[0], vertices[1], vertices[2], asteroid->normals[i]);
-    }
+    int v = 0;
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            if (i != j)
+                glm_vec3_copy(vertices[j], asteroid->vertices[v++]);
 
-    glm_vec3_copy(vertices[0], asteroid->vertices[3]);
-    glm_vec3_copy(vertices[1], asteroid->vertices[4]);
-    glm_vec3_copy(vertices[3], asteroid->vertices[5]);
-    for (int i = 3; i < 6; i++) {
-        make_normal(vertices[0], vertices[1], vertices[3], asteroid->normals[i]);
-    }
-
-    glm_vec3_copy(vertices[0], asteroid->vertices[6]);
-    glm_vec3_copy(vertices[2], asteroid->vertices[7]);
-    glm_vec3_copy(vertices[3], asteroid->vertices[8]);
-    for (int i = 6; i < 9; i++) {
-        make_normal(vertices[0], vertices[2], vertices[3], asteroid->normals[i]);
-    }
-
-    glm_vec3_copy(vertices[1], asteroid->vertices[9]);
-    glm_vec3_copy(vertices[2], asteroid->vertices[10]);
-    glm_vec3_copy(vertices[3], asteroid->vertices[11]);
-    for (int i = 9; i < 12; i++) {
-        make_normal(vertices[1], vertices[2], vertices[3], asteroid->normals[i]);
-    }
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 3; j++)
+            make_normal(asteroid->vertices[i*3],
+                        asteroid->vertices[i*3+1],
+                        asteroid->vertices[i*3+2],
+                        asteroid->normals[i*3+j]);
 
     asteroid->x = x;
     asteroid->y = y;
