@@ -1,8 +1,10 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#define VERTEX_SHADER_PATH "vertexshader.glsl"
-#define FRAGMENT_SHADER_PATH "fragmentshader.glsl"
+#define ASTEROID_VERTEX_SHADER_PATH "asteroid_vertices.glsl"
+#define ASTEROID_FRAGMENT_SHADER_PATH "asteroid_fragments.glsl"
+#define BULLET_VERTEX_SHADER_PATH "bullet_vertices.glsl"
+#define BULLET_FRAGMENT_SHADER_PATH "bullet_fragments.glsl"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -13,7 +15,7 @@
 
 int intialize_window(GLFWwindow **);
 
-void collect_vertices(asteroid_list_t*);
+void collect_vertices(asteroid_list_t *, bullet_list_t *);
 
 void render (GLFWwindow *);
 

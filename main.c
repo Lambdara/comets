@@ -6,6 +6,16 @@
 GLFWwindow *window;
 
 asteroid_list_t *asteroids;
+bullet_list_t *bullets;
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_T && action == GLFW_PRESS){
+        vec3 direction = {sin(camera_angle), 0.0f, -cos(camera_angle)};
+        bullet_t *bullet = create_bullet(camera_location, direction);
+        bullets = bullet_list_cons(bullet, bullets);
+    }
+}
 
 int main(int argc, char *argv[]) {
     srand(time(0));
@@ -15,6 +25,8 @@ int main(int argc, char *argv[]) {
     camera_location[1] = 0.0f;
     camera_location[2] = 20.0f;
     camera_angle = 0.0;
+
+    bullets = create_bullet_list();
 
     asteroids = create_asteroid_list();
     for (int x = 0; x < 5; x++) {
@@ -38,6 +50,7 @@ int main(int argc, char *argv[]) {
     int error = intialize_window(&window);
     if (error)
         return error;
+    glfwSetKeyCallback(window, key_callback);
 
     double new_time = 0.0d;
     double last_time = glfwGetTime();
@@ -53,6 +66,16 @@ int main(int argc, char *argv[]) {
         while (asteroids_head->next != NULL){
             asteroids_head->this->angle += asteroids_head->this->rotation_speed * delta;
             asteroids_head = asteroids_head->next;
+        }
+
+        // Move bullets
+        bullet_list_t *bullets_head = bullets;
+        while (bullets_head->next != NULL) {
+            vec3 diff;
+            glm_vec3_scale(bullets_head->this->direction, delta*bullets_head->this->speed, diff);
+            glm_vec3_add(bullets_head->this->location, diff, bullets_head->this->location);
+
+            bullets_head = bullets_head->next;
         }
 
         // Handle keys
@@ -87,7 +110,7 @@ int main(int argc, char *argv[]) {
             camera_location[1] += (float) delta * camera_speed;
         }
 
-        collect_vertices(asteroids);
+        collect_vertices(asteroids, bullets);
         render(window);
         glfwPollEvents();
     }

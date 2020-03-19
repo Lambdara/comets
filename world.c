@@ -72,11 +72,42 @@ asteroid_list_t *create_asteroid_list() {
     return asteroids;
 }
 
-asteroid_list_t* asteroid_list_cons(asteroid_t* asteroid, asteroid_list_t* asteroids) {
+asteroid_list_t *asteroid_list_cons(asteroid_t* asteroid, asteroid_list_t* asteroids) {
     asteroid_list_t *node = malloc(sizeof(asteroid_list_t));
 
     node->this = asteroid;
     node->next = asteroids;
+
+    return node;
+}
+
+bullet_t *create_bullet(vec3 location, vec3 direction) {
+    bullet_t *bullet = malloc(sizeof(bullet_t));
+
+    glm_vec3_copy(location, bullet->location);
+    bullet->location[1] -= 1.0f;
+    glm_vec3_copy(direction, bullet->direction);
+    glm_vec3_divs(direction, 2.0f, bullet->to);
+    glm_vec3_divs(direction, -2.0f, bullet->from);
+    bullet->speed = 50.0f;
+
+    return bullet;
+}
+
+bullet_list_t *create_bullet_list() {
+    bullet_list_t *bullets = malloc(sizeof(bullet_list_t));
+
+    bullets->this = NULL;
+    bullets->next = NULL;
+
+    return bullets;
+}
+
+bullet_list_t *bullet_list_cons(bullet_t* bullet, bullet_list_t* bullets) {
+    bullet_list_t *node = malloc(sizeof(bullet_list_t));
+
+    node->this = bullet;
+    node->next = bullets;
 
     return node;
 }
