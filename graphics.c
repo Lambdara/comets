@@ -177,6 +177,7 @@ int intialize_window(GLFWwindow **window) {
         return 1;
     }
 
+    glfwWindowHint(GLFW_SAMPLES, 8);
     *window = glfwCreateWindow(1920, 1080, "Particles", NULL, NULL);
 
     if (!*window) {
@@ -193,6 +194,8 @@ int intialize_window(GLFWwindow **window) {
         fprintf(stderr, "Error initializing GLEW: %s\n", glewGetErrorString(res));
         return 1;
     }
+
+    glEnable(GL_MULTISAMPLE);
 
     add_shaders();
 
