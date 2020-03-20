@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     camera_location[2] = 20.0f;
     camera_angle = 0.0;
 
-    ship = create_ship(camera_location, camera_location);
+    ship = create_ship((vec3) {0.0f, 0.0f, 0.0f}, (vec3) {0.0f, 0.0f, 0.0f});
 
     bullets = create_bullet_list();
 
@@ -112,13 +112,6 @@ int main(int argc, char *argv[]) {
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
             camera_location[1] += (float) delta * camera_speed;
         }
-
-        vec3 dir = {sin(camera_angle), 0.0f, -cos(camera_angle)};
-        glm_vec3_copy(dir,ship->direction);
-        glm_vec3_copy(camera_location, ship->location);
-        glm_vec3_scale(dir, 4.0f, dir);
-        glm_vec3_add(dir, ship->location, ship->location);        
-        ship->location[1] -= 1.0f;
  
         collect_vertices(asteroids, bullets, ship);
         render(window);

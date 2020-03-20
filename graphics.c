@@ -170,7 +170,7 @@ void collect_vertices(asteroid_list_t* asteroids, bullet_list_t *bullets, ship_t
     ship_normals = ship->normals;
     glm_mat4_identity(ship_model_matrix);
     glm_translate(ship_model_matrix, ship->location);
-    glm_rotate(ship_model_matrix, camera_angle, (vec3) {0.0f, -1.0f, 0.0f});
+    glm_rotate(ship_model_matrix, 0.0f, (vec3) {0.0f, -1.0f, 0.0f});
 }
 
 void add_shaders() {
