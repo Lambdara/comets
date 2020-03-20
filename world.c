@@ -60,6 +60,14 @@ asteroid_t *create_asteroid(float x, float y, float z) {
     glm_vec3_normalize(asteroid->axis);
     asteroid->angle = rand() / (float) RAND_MAX * 3.14159 * 2;
 
+    glm_vec3_copy((vec3) {rand() / (float) RAND_MAX,
+                              rand() / (float) RAND_MAX,
+                              rand() / (float) RAND_MAX},
+        asteroid->direction);
+    glm_vec3_normalize(asteroid->direction);
+    asteroid->speed = rand() / (float) RAND_MAX;
+
+
     return asteroid;
 }
 
@@ -111,10 +119,9 @@ bullet_list_t *bullet_list_cons(bullet_t* bullet, bullet_list_t* bullets) {
     return node;
 }
 
-ship_t *create_ship(vec3 location, vec3 direction) {
+ship_t *create_ship(vec3 direction) {
     ship_t *ship = malloc(sizeof(ship_t));
 
-    glm_vec3_copy(location, ship->location);
     glm_vec3_copy(direction, ship->direction);
     ship->speed = 0.0f;
 

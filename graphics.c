@@ -13,15 +13,15 @@ unsigned int asteroid_shader_program, bullet_shader_program;
 vec3 *ship_vertices;
 vec3 *ship_normals;
 mat4 ship_model_matrix;
+vec3 eye_dir;
 
 void render(GLFWwindow *window) {
     mat4 view_matrix;
     mat4 projection_matrix;
 
     vec3 eye = {camera_location[0], camera_location[1], camera_location[2]};
-    vec3 dir = {sin(camera_angle), 0.0f, -cos(camera_angle)};
     vec3 up = {0.0f, 1.0f, 0.0f};
-    glm_look(eye, dir, up, view_matrix);
+    glm_look(eye, eye_dir, up, view_matrix);
 
     glm_perspective(3.14159265358979323f/2.0f, 16.0f/9.0f, 0.1f, 100000.0f, projection_matrix);
 
@@ -169,8 +169,15 @@ void collect_vertices(asteroid_list_t* asteroids, bullet_list_t *bullets, ship_t
     ship_vertices = ship->vertices;
     ship_normals = ship->normals;
     glm_mat4_identity(ship_model_matrix);
-    glm_translate(ship_model_matrix, ship->location);
-    glm_rotate(ship_model_matrix, 0.0f, (vec3) {0.0f, -1.0f, 0.0f});
+    float angle = glm_vec3_angle(ship->direction, (vec3) {0.0f, 0.0f, -1.0f});
+    if (ship->direction[0] < 0.0f) {
+        angle *= -1;
+    }
+    glm_rotate(ship_model_matrix, angle, (vec3) {0.0f, -1.0f, 0.0f});
+    glm_vec3_copy(ship->direction, eye_dir);
+
+    glm_vec3_scale(ship->direction, -16.0f, camera_location);
+    camera_location[1] += 8.0f;
 }
 
 void add_shaders() {

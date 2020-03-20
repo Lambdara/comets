@@ -13,7 +13,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
     if (key == GLFW_KEY_T && action == GLFW_PRESS){
         vec3 direction = {sin(camera_angle), 0.0f, -cos(camera_angle)};
-        bullet_t *bullet = create_bullet(ship->location, direction);
+        bullet_t *bullet = create_bullet((vec3) {0.0f, 0.0f, 0.0f}, direction);
         bullets = bullet_list_cons(bullet, bullets);
     }
 }
@@ -21,13 +21,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 int main(int argc, char *argv[]) {
     srand(time(0));
 
-    float camera_speed = 10.0f;
-    camera_location[0] = 0.5f;
-    camera_location[1] = 0.0f;
-    camera_location[2] = 20.0f;
-    camera_angle = 0.0;
-
-    ship = create_ship((vec3) {0.0f, 0.0f, 0.0f}, (vec3) {0.0f, 0.0f, 0.0f});
+    ship = create_ship((vec3) {0.0f, 0.0f, -1.0f});
 
     bullets = create_bullet_list();
 
@@ -81,38 +75,48 @@ int main(int argc, char *argv[]) {
             bullets_head = bullets_head->next;
         }
 
+        // Move asteroids
+        asteroids_head = asteroids;
+        while (asteroids_head->next != NULL) {
+            vec3 diff;
+            vec3 ship_diff;
+            glm_vec3_scale(ship->direction, -ship->speed, ship_diff);
+            glm_vec3_scale(asteroids_head->this->direction, delta*asteroids_head->this->speed, diff);
+            asteroids_head->this->x += diff[0] + ship_diff[0];
+            asteroids_head->this->y += diff[1] + ship_diff[1];
+            asteroids_head->this->z += diff[2] + ship_diff[2];
+
+            asteroids_head = asteroids_head->next;
+        }
+
         // Handle keys
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            camera_location[2] -= (float) delta * camera_speed * cos(camera_angle);
-            camera_location[0] += (float) delta * camera_speed * sin(camera_angle);
+            ship->speed += delta * 0.5f;
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            camera_location[2] += (float) delta * camera_speed * cos(camera_angle);
-            camera_location[0] -= (float) delta * camera_speed * sin(camera_angle);
+            ship->speed -= delta * 0.5f;
         }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            camera_location[0] += (float) delta * camera_speed * cos(-camera_angle);
-            camera_location[2] -= (float) delta * camera_speed * sin(-camera_angle);
+            glm_vec3_rotate(ship->direction, -delta, (vec3) {0.0f, 1.0f, 0.0f});
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            camera_location[0] -= (float) delta * camera_speed * cos(-camera_angle);
-            camera_location[2] += (float) delta * camera_speed * sin(-camera_angle);
+            glm_vec3_rotate(ship->direction, delta, (vec3) {0.0f, 1.0f, 0.0f});
         }
         if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-            camera_angle -= (float) delta;
-            camera_angle = fmod(camera_angle, 3.14159f * 2);
+            /* camera_angle -= (float) delta; */
+            /* camera_angle = fmod(camera_angle, 3.14159f * 2); */
         }
         if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-            camera_angle += (float) delta;
-            camera_angle = fmod(camera_angle, 3.14159f * 2);
+            /* camera_angle += (float) delta; */
+            /* camera_angle = fmod(camera_angle, 3.14159f * 2); */
         }
         if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-            camera_location[1] -= (float) delta * camera_speed;
+            /* camera_location[1] -= (float) delta * camera_speed; */
         }
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-            camera_location[1] += (float) delta * camera_speed;
+            /* camera_location[1] += (float) delta * camera_speed; */
         }
- 
+
         collect_vertices(asteroids, bullets, ship);
         render(window);
         glfwPollEvents();
