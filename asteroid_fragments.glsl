@@ -7,7 +7,7 @@ out vec4 pixel_color;
 
 void main()
 {
-    vec3 light_position = vec3(10000.0, 0.0, 0.0);
+    vec3 light_position = vec3(10000.0, 5000.0, 0.0);
 
     vec3 light_direction = normalize(light_position - fragment_position);
 

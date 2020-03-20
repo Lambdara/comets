@@ -85,10 +85,9 @@ bullet_t *create_bullet(vec3 location, vec3 direction) {
     bullet_t *bullet = malloc(sizeof(bullet_t));
 
     glm_vec3_copy(location, bullet->location);
-    bullet->location[1] -= 1.0f;
     glm_vec3_copy(direction, bullet->direction);
-    glm_vec3_divs(direction, 2.0f, bullet->to);
-    glm_vec3_divs(direction, -2.0f, bullet->from);
+    glm_vec3_divs(direction, 10.0f, bullet->to);
+    glm_vec3_divs(direction, -10.0f, bullet->from);
     bullet->speed = 50.0f;
 
     return bullet;
@@ -110,4 +109,56 @@ bullet_list_t *bullet_list_cons(bullet_t* bullet, bullet_list_t* bullets) {
     node->next = bullets;
 
     return node;
+}
+
+ship_t *create_ship(vec3 location, vec3 direction) {
+    ship_t *ship = malloc(sizeof(ship_t));
+
+    glm_vec3_copy(location, ship->location);
+    glm_vec3_copy(direction, ship->direction);
+    ship->speed = 0.0f;
+
+    vec3 vertices[5] = {{0.0f, 0.0f, -2.0f}, // front       0
+                        {-1.0f, 0.0f, 1.0f}, // back, left  1
+                        {1.0f, 0.0f, 1.0f}, // back, right  2
+                        {0.0f, 0.2f, 1.0f}, // back, up     3
+                        {0.0f, -0.2f, 1.0f}}; // back, down 4
+
+    ship->vertices = malloc(6*3*sizeof(vec3)); // 6 surfaces of 3 vertices
+    ship->normals = malloc(6*3*sizeof(vec3)); // idem
+
+    glm_vec3_copy(vertices[0], ship->vertices[0]);
+    glm_vec3_copy(vertices[1], ship->vertices[1]);
+    glm_vec3_copy(vertices[3], ship->vertices[2]);
+
+    glm_vec3_copy(vertices[0], ship->vertices[3]);
+    glm_vec3_copy(vertices[2], ship->vertices[4]);
+    glm_vec3_copy(vertices[3], ship->vertices[5]);
+
+    glm_vec3_copy(vertices[0], ship->vertices[6]);
+    glm_vec3_copy(vertices[1], ship->vertices[7]);
+    glm_vec3_copy(vertices[4], ship->vertices[8]);
+
+    glm_vec3_copy(vertices[0], ship->vertices[9]);
+    glm_vec3_copy(vertices[2], ship->vertices[10]);
+    glm_vec3_copy(vertices[4], ship->vertices[11]);
+
+    glm_vec3_copy(vertices[3], ship->vertices[12]);
+    glm_vec3_copy(vertices[1], ship->vertices[13]);
+    glm_vec3_copy(vertices[4], ship->vertices[14]);
+
+    glm_vec3_copy(vertices[3], ship->vertices[15]);
+    glm_vec3_copy(vertices[2], ship->vertices[16]);
+    glm_vec3_copy(vertices[4], ship->vertices[17]);
+
+    for (int i = 0; i < 6; i++) {
+        for (int j = i * 3; j < i * 3 + 3; j++) {
+            make_normal(ship->vertices[i*3],
+                        ship->vertices[i*3+1],
+                        ship->vertices[i*3+2],
+                        ship->normals[j]);
+        }
+    }
+    
+    return ship;
 }

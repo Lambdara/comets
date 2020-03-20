@@ -22,6 +22,14 @@ typedef struct {
     float speed;
 } bullet_t;
 
+typedef struct {
+    vec3* vertices;
+    vec3* normals;
+    vec3 location;
+    vec3 direction;
+    float speed;
+} ship_t;
+
 typedef struct asteroid_list_t {
     asteroid_t *this;
     struct asteroid_list_t *next;
@@ -44,5 +52,7 @@ asteroid_list_t *asteroid_list_cons(asteroid_t*, asteroid_list_t*);
 bullet_t *create_bullet(vec3, vec3);
 bullet_list_t *create_bullet_list();
 bullet_list_t *bullet_list_cons(bullet_t *, bullet_list_t *);
+
+ship_t *create_ship(vec3, vec3);
 
 #endif

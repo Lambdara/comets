@@ -15,7 +15,7 @@
 
 int intialize_window(GLFWwindow **);
 
-void collect_vertices(asteroid_list_t *, bullet_list_t *);
+void collect_vertices(asteroid_list_t *, bullet_list_t *, ship_t *);
 
 void render (GLFWwindow *);
 

@@ -2,14 +2,17 @@
 
 int asteroids_length;
 int bullets_length;
-int vertices_length;
-vec3 *vertices;
+int asteroid_vertices_length;
+vec3 *asteroid_vertices;
 vec3 *normals;
 vec3 *bullet_vertices;
 int model_matrices_length;
 mat4 *model_matrices;
 mat4 *bullet_model_matrices;
 unsigned int asteroid_shader_program, bullet_shader_program;
+vec3 *ship_vertices;
+vec3 *ship_normals;
+mat4 ship_model_matrix;
 
 void render(GLFWwindow *window) {
     mat4 view_matrix;
@@ -23,10 +26,10 @@ void render(GLFWwindow *window) {
     glm_perspective(3.14159265358979323f/2.0f, 16.0f/9.0f, 0.1f, 100000.0f, projection_matrix);
 
 
-    GLuint *vbos = malloc(sizeof(GLuint)*asteroids_length);
-    GLuint *nbos = malloc(sizeof(GLuint)*asteroids_length);
-    glGenBuffers(asteroids_length, vbos);
-    glGenBuffers(asteroids_length, nbos);
+    GLuint vbo;
+    GLuint nbo;
+    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &nbo);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -38,21 +41,36 @@ void render(GLFWwindow *window) {
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+
+    glUniformMatrix4fv(view_matrix_loc, 1, GL_FALSE, view_matrix[0]);
+    glUniformMatrix4fv(projection_matrix_loc, 1, GL_FALSE, projection_matrix[0]);
+    
     for (int i = 0; i < asteroids_length; i++) {
         #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-        glBindBuffer(GL_ARRAY_BUFFER, vbos[i]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*12, &(vertices[i*12]), GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*12, &(asteroid_vertices[i*12]), GL_DYNAMIC_DRAW);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-        glBindBuffer(GL_ARRAY_BUFFER, nbos[i]);
+        glBindBuffer(GL_ARRAY_BUFFER, nbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*12, &(normals[i*12]), GL_DYNAMIC_DRAW);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
    
         glUniformMatrix4fv(model_matrix_loc, 1, GL_FALSE, model_matrices[i][0]);
-        glUniformMatrix4fv(view_matrix_loc, 1, GL_FALSE, view_matrix[0]);
-        glUniformMatrix4fv(projection_matrix_loc, 1, GL_FALSE, projection_matrix[0]);
         glDrawArrays(GL_TRIANGLES, 0, 12);
     }
+
+    // Draw ship
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*18, ship_vertices, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, nbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*18, ship_normals, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glUniformMatrix4fv(model_matrix_loc, 1, GL_FALSE, ship_model_matrix[0]);
+    glDrawArrays(GL_TRIANGLES, 0, 18);
+    
 
     // Draw bullets
     glDisableVertexAttribArray(1);
@@ -80,8 +98,8 @@ void render(GLFWwindow *window) {
     glDisableVertexAttribArray(0);
     glfwSwapBuffers(window);
     glDeleteBuffers(bullets_length, bullet_vbos);
-    glDeleteBuffers(asteroids_length, vbos);
-    glDeleteBuffers(asteroids_length, nbos);
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &nbo);
 }
 
 void asteroid_model_matrix (asteroid_t* asteroid, mat4 matrix) {
@@ -95,7 +113,7 @@ void bullet_model_matrix(bullet_t* bullet, mat4 matrix) {
     glm_translate(matrix, bullet->location);
 }
 
-void collect_vertices(asteroid_list_t* asteroids, bullet_list_t *bullets) {
+void collect_vertices(asteroid_list_t* asteroids, bullet_list_t *bullets, ship_t *ship) {
     asteroids_length = 0;
     asteroid_list_t *asteroids_head = asteroids;
     while (asteroids_head->next != NULL){
@@ -103,9 +121,9 @@ void collect_vertices(asteroid_list_t* asteroids, bullet_list_t *bullets) {
         asteroids_head = asteroids_head->next;
     }
 
-    vertices_length = asteroids_length * 12;
-    vertices = malloc(sizeof(float)*3*vertices_length);
-    normals = malloc(sizeof(float)*3*vertices_length);
+    asteroid_vertices_length = asteroids_length * 12;
+    asteroid_vertices = malloc(sizeof(float)*3*asteroid_vertices_length);
+    normals = malloc(sizeof(float)*3*asteroid_vertices_length);
     model_matrices = malloc(sizeof(mat4)*asteroids_length);
 
     asteroids_head = asteroids;
@@ -116,7 +134,7 @@ void collect_vertices(asteroid_list_t* asteroids, bullet_list_t *bullets) {
 
         for (int i = 0; i < 12; i++) {
             glm_vec3_copy(asteroid->normals[i], normals[v]);
-            glm_vec3_copy(asteroid->vertices[i], vertices[v]);
+            glm_vec3_copy(asteroid->vertices[i], asteroid_vertices[v]);
             v++;
         }
 
@@ -147,6 +165,12 @@ void collect_vertices(asteroid_list_t* asteroids, bullet_list_t *bullets) {
 
         bullets_head = bullets_head->next;
     }
+
+    ship_vertices = ship->vertices;
+    ship_normals = ship->normals;
+    glm_mat4_identity(ship_model_matrix);
+    glm_translate(ship_model_matrix, ship->location);
+    glm_rotate(ship_model_matrix, camera_angle, (vec3) {0.0f, -1.0f, 0.0f});
 }
 
 void add_shaders() {
