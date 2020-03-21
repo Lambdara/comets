@@ -9,6 +9,8 @@ asteroid_list_t *asteroids;
 bullet_list_t *bullets;
 ship_t *ship;
 
+float max_distance = 100.0f;
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_T && action == GLFW_PRESS){
@@ -84,6 +86,9 @@ int main(int argc, char *argv[]) {
             glm_vec3_scale(asteroids_head->this->direction, delta*asteroids_head->this->speed, diff);
             glm_vec3_add(asteroids_head->this->location, diff, asteroids_head->this->location);
             glm_vec3_add(asteroids_head->this->location, ship_diff, asteroids_head->this->location);
+            if (glm_vec3_norm(asteroids_head->this->location) > max_distance) {
+                glm_vec3_negate(asteroids_head->this->location);
+            }
 
             asteroids_head = asteroids_head->next;
         }
