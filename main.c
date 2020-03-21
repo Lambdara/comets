@@ -28,10 +28,19 @@ int main(int argc, char *argv[]) {
     bullets = create_bullet_list();
 
     asteroids = create_asteroid_list();
-    for (int x = 0; x < 5; x++) {
-        for (int y = 0; y < 5; y++) {
-            asteroids = asteroid_list_cons(create_asteroid((vec3) {(x-2)*2.0f, 0.0f, (y-2)*2.0f}, 5.0f), asteroids);
-        }
+    for (int i = 0; i < 25; i++) {
+        float longitude = rand() / (float) RAND_MAX * 3.14159 * 2;
+        float colatitude = rand() / (float) RAND_MAX * 3.14159;
+        float distance = rand() / (float) RAND_MAX * max_distance;
+        asteroids = asteroid_list_cons(
+                                       create_asteroid(
+                                                       (vec3) {
+                                                           distance * cos(longitude) * sin(colatitude),
+                                                           distance * sin(longitude) * sin(colatitude),
+                                                           distance * cos(colatitude)
+                                                       },
+                                                       5.0f),
+                                       asteroids);
     }
     asteroid_t *sun = create_asteroid((vec3) {10000.0f, 5000.0f, 0.0f}, 100.0f);
 
