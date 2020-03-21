@@ -65,7 +65,7 @@ asteroid_t *create_asteroid(vec3 location, float radius) {
 
     glm_vec3_copy(location, asteroid->location);
 
-    asteroid->rotation_speed = rand() / (float) RAND_MAX * 3.14159;
+    asteroid->rotation_speed = rand() / (float) RAND_MAX * 0.25f;
     for (int i = 0; i < 3; i++)
         asteroid->axis[i] = rand() / (float) RAND_MAX;
     glm_vec3_normalize(asteroid->axis);
