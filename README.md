@@ -5,10 +5,19 @@ Comets is an attempt at making a 3D game based on the 2D game 'Asteroids'.
 - Asteroids are simple 3D models, floating in space. They spawn at some distance from the player and loop around when far enough behind the player, to create a compact but "open" world. (This actually makes the world into a three-torus)
 
 ## Plan:
-- Implement collision check for shooting
-- Implement asteroids splitting into smaller asteroids; with some kind of mechanism where they eventually get destroyed (perhaps just a simple counter of splits left)
-- Add asteroid generation and destruction at the ends of the map.
-- Add 'moving' asteroids.
-- Optimize the engine by using `GL_TRIANGLE_STRIP` instead of `GL_TRIANGLES` where possible.
-- Asteroids should be stored as sets of triangles which are to be drawn using `GL_TRIANGLES`. We can expand this to also allow `GL_TRIANGLE_STRIP` later.
+- Create bigger asteroids and make them spawn in more random locations
+- Allow change of flight direction to up and down
+- Implement newtonian movement (turning doesn't change direction of movement, just of acceleration)
+- Make asteroids more complex shapes
+- Implement a proper sun (visual only, should be drawn out of accessible map)
+- Fix shooting direction
+- Delete bullets at the edge of the map
+- Collision check for shooting
+- Make asteroids split into smaller asteroids when hit; with some kind of mechanism where they eventually get destroyed (perhaps just a simple counter of splits left)
+- Generate new asteroids with ramping up difficulty (faster, bigger)
+- Implement score tracking and display
 
+Optional, if I still care after everything's working:
+- Add local score saving
+- Add shadows
+- Add "dust" particles, the visibility of which is determined by shadows, giving a reverse sunbeam effect left by asteroids
