@@ -37,6 +37,16 @@ asteroid_t *create_asteroid(float x, float y, float z) {
     vertices[3][1] = -(vertices[0][1] + vertices[1][1] + vertices[2][1])/3.0f;
     vertices[3][2] = -(vertices[0][2] + vertices[1][2] + vertices[2][2])/3.0f;
 
+    // Have center of mass in the center
+    vec3 com = {0.0f, 0.0f, 0.0f};
+    for(int i = 0; i < 4; i++) {
+        glm_vec3_add(vertices[i], com, com);
+    }
+    glm_vec3_scale(com, 1.0f/4.0f, com);
+    for(int i = 0; i < 4; i++) {
+        glm_vec3_sub(vertices[i], com, vertices[i]);
+    }
+
     int v = 0;
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
