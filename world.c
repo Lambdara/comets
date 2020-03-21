@@ -13,7 +13,7 @@ void make_normal(vec3 a, vec3 b, vec3 c, vec3 n) {
     }
 }
 
-asteroid_t *create_asteroid(vec3 location) {
+asteroid_t *create_asteroid(vec3 location, float radius) {
     asteroid_t *asteroid = malloc(sizeof(asteroid_t));
 
     asteroid->vertices_length = 12;
@@ -45,6 +45,9 @@ asteroid_t *create_asteroid(vec3 location) {
     glm_vec3_scale(com, 1.0f/4.0f, com);
     for(int i = 0; i < 4; i++) {
         glm_vec3_sub(vertices[i], com, vertices[i]);
+    }
+    for(int i = 0; i < 4; i++) {
+        glm_vec3_scale(vertices[i], radius, vertices[i]);
     }
 
     int v = 0;

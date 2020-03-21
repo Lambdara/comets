@@ -30,18 +30,15 @@ int main(int argc, char *argv[]) {
     asteroids = create_asteroid_list();
     for (int x = 0; x < 5; x++) {
         for (int y = 0; y < 5; y++) {
-            asteroids = asteroid_list_cons(create_asteroid((vec3) {(x-2)*2.0f, 0.0f, (y-2)*2.0f}), asteroids);
+            asteroids = asteroid_list_cons(create_asteroid((vec3) {(x-2)*2.0f, 0.0f, (y-2)*2.0f}, 5.0f), asteroids);
         }
     }
-    asteroid_t *sun = create_asteroid((vec3) {10000.0f, 5000.0f, 0.0f});
+    asteroid_t *sun = create_asteroid((vec3) {10000.0f, 5000.0f, 0.0f}, 100.0f);
 
     for (int i = 0; i < 12; i++) {
         sun->normals[i][0] = -sun->normals[i][0];
         sun->normals[i][1] = -sun->normals[i][1];
         sun->normals[i][2] = -sun->normals[i][2];
-        sun->vertices[i][0] = 100.0f*sun->vertices[i][0];
-        sun->vertices[i][1] = 100.0f*sun->vertices[i][1];
-        sun->vertices[i][2] = 100.0f*sun->vertices[i][2];
     }
 
     asteroids = asteroid_list_cons(sun, asteroids);
