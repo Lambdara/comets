@@ -8,7 +8,7 @@ typedef struct {
     int vertices_length;
     vec3 *vertices;
     vec3 *normals;
-    float x, y, z;
+    vec3 location;
     float rotation_speed;
     vec3 direction;
     float speed;
@@ -44,7 +44,7 @@ typedef struct bullet_list_t {
 vec3 camera_location;
 float camera_angle;
 
-asteroid_t *create_asteroid(float, float, float);
+asteroid_t *create_asteroid(vec3);
 
 asteroid_list_t *create_asteroid_list();
 

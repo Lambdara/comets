@@ -28,10 +28,10 @@ int main(int argc, char *argv[]) {
     asteroids = create_asteroid_list();
     for (int x = 0; x < 5; x++) {
         for (int y = 0; y < 5; y++) {
-            asteroids = asteroid_list_cons(create_asteroid((x-2)*2.0f, 0.0f, (y-2)*2.0f), asteroids);
+            asteroids = asteroid_list_cons(create_asteroid((vec3) {(x-2)*2.0f, 0.0f, (y-2)*2.0f}), asteroids);
         }
     }
-    asteroid_t *sun = create_asteroid(10000.0f, 5000.0f, 0.0f);
+    asteroid_t *sun = create_asteroid((vec3) {10000.0f, 5000.0f, 0.0f});
 
     for (int i = 0; i < 12; i++) {
         sun->normals[i][0] = -sun->normals[i][0];
@@ -82,9 +82,8 @@ int main(int argc, char *argv[]) {
             vec3 ship_diff;
             glm_vec3_scale(ship->direction, -ship->speed, ship_diff);
             glm_vec3_scale(asteroids_head->this->direction, delta*asteroids_head->this->speed, diff);
-            asteroids_head->this->x += diff[0] + ship_diff[0];
-            asteroids_head->this->y += diff[1] + ship_diff[1];
-            asteroids_head->this->z += diff[2] + ship_diff[2];
+            glm_vec3_add(asteroids_head->this->location, diff, asteroids_head->this->location);
+            glm_vec3_add(asteroids_head->this->location, ship_diff, asteroids_head->this->location);
 
             asteroids_head = asteroids_head->next;
         }

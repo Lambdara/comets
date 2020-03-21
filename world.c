@@ -13,7 +13,7 @@ void make_normal(vec3 a, vec3 b, vec3 c, vec3 n) {
     }
 }
 
-asteroid_t *create_asteroid(float x, float y, float z) {
+asteroid_t *create_asteroid(vec3 location) {
     asteroid_t *asteroid = malloc(sizeof(asteroid_t));
 
     asteroid->vertices_length = 12;
@@ -60,9 +60,7 @@ asteroid_t *create_asteroid(float x, float y, float z) {
                         asteroid->vertices[i*3+2],
                         asteroid->normals[i*3+j]);
 
-    asteroid->x = x;
-    asteroid->y = y;
-    asteroid->z = z;
+    glm_vec3_copy(location, asteroid->location);
 
     asteroid->rotation_speed = rand() / (float) RAND_MAX * 3.14159;
     for (int i = 0; i < 3; i++)
