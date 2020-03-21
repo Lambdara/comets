@@ -18,6 +18,7 @@ Comets is an attempt at making a 3D game based on the 2D game 'Asteroids'.
 - Implement score tracking and display
 
 Optional, if I still care after everything's working:
+- Add skybox
 - Add local score saving
 - Add shadows
 - Add "dust" particles, the visibility of which is determined by shadows, giving a reverse sunbeam effect left by asteroids
