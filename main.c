@@ -14,8 +14,7 @@ float max_distance = 1000.0f;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_T && action == GLFW_PRESS){
-        vec3 direction = {sin(camera_angle), 0.0f, -cos(camera_angle)};
-        bullet_t *bullet = create_bullet((vec3) {0.0f, 0.0f, 0.0f}, direction);
+        bullet_t *bullet = create_bullet((vec3) {0.0f, 0.0f, 0.0f}, ship->direction);
         bullets = bullet_list_cons(bullet, bullets);
     }
 }

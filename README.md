@@ -9,7 +9,6 @@ Comets is an attempt at making a 3D game based on the 2D game 'Asteroids'.
 - Implement newtonian movement (turning doesn't change direction of movement, just of acceleration)
 - Make asteroids more complex shapes
 - Implement a proper sun (visual only, should be drawn out of accessible map)
-- Fix shooting direction
 - Delete bullets at the edge of the map
 - Collision check for shooting
 - Make asteroids split into smaller asteroids when hit; with some kind of mechanism where they eventually get destroyed (perhaps just a simple counter of splits left)
