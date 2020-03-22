@@ -99,10 +99,10 @@ int main(int argc, char *argv[]) {
         }
 
         // Handle keys
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             ship->speed += delta * 0.5f;
         }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
             ship->speed -= delta * 0.5f;
         }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
