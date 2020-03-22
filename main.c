@@ -22,6 +22,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 int main(int argc, char *argv[]) {
     srand(time(0));
 
+    int error = intialize_window(&window);
+    if (error)
+        return error;
+    glfwSetKeyCallback(window, key_callback);
+
     ship = create_ship((vec3) {0.0f, 0.0f, -1.0f});
 
     bullets = create_bullet_list();
@@ -50,11 +55,6 @@ int main(int argc, char *argv[]) {
     }
 
     asteroids = asteroid_list_cons(sun, asteroids);
-
-    int error = intialize_window(&window);
-    if (error)
-        return error;
-    glfwSetKeyCallback(window, key_callback);
 
     double new_time = 0.0d;
     double last_time = glfwGetTime();
