@@ -111,14 +111,6 @@ int main(int argc, char *argv[]) {
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
             glm_vec3_rotate(ship->direction, delta, (vec3) {0.0f, 1.0f, 0.0f});
         }
-        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-            /* camera_angle -= (float) delta; */
-            /* camera_angle = fmod(camera_angle, 3.14159f * 2); */
-        }
-        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-            /* camera_angle += (float) delta; */
-            /* camera_angle = fmod(camera_angle, 3.14159f * 2); */
-        }
         if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
             /* camera_location[1] -= (float) delta * camera_speed; */
         }
