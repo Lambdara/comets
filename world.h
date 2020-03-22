@@ -2,12 +2,15 @@
 #define WORLD_H
 
 #include <stdlib.h>
+#include <GL/glew.h>
 #include <cglm/cglm.h>
 
 typedef struct {
     int vertices_length;
     vec3 *vertices;
     vec3 *normals;
+    GLuint vbo;
+    GLuint nbo;
     vec3 location;
     float rotation_speed;
     vec3 direction;
@@ -17,8 +20,7 @@ typedef struct {
 } asteroid_t;
 
 typedef struct {
-    vec3 from;
-    vec3 to;
+    vec3 *vertices;
     vec3 direction;
     vec3 location;
     float speed;

@@ -102,11 +102,12 @@ asteroid_list_t *asteroid_list_cons(asteroid_t* asteroid, asteroid_list_t* aster
 
 bullet_t *create_bullet(vec3 location, vec3 direction) {
     bullet_t *bullet = malloc(sizeof(bullet_t));
+    bullet->vertices = malloc(2 * sizeof(vec3));
 
     glm_vec3_copy(location, bullet->location);
     glm_vec3_copy(direction, bullet->direction);
-    glm_vec3_divs(direction, 10.0f, bullet->to);
-    glm_vec3_divs(direction, -10.0f, bullet->from);
+    glm_vec3_divs(direction, 10.0f, bullet->vertices[1]);
+    glm_vec3_divs(direction, -10.0f, bullet->vertices[0]);
     bullet->speed = 50.0f;
 
     return bullet;

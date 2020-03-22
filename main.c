@@ -126,8 +126,7 @@ int main(int argc, char *argv[]) {
             /* camera_location[1] += (float) delta * camera_speed; */
         }
 
-        collect_vertices(asteroids, bullets, ship);
-        render(window);
+        render(window, asteroids, bullets, ship);
         glfwPollEvents();
     }
 
