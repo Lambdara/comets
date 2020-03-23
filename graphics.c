@@ -20,7 +20,18 @@ void render(GLFWwindow *window, asteroid_list_t* asteroids, bullet_list_t *bulle
     mat4 model_matrix;
 
     glm_mat4_identity(model_matrix);
-    float angle = glm_vec3_angle(ship->direction, (vec3) {0.0f, 0.0f, -1.0f});
+
+    float angle;
+    vec3 axis;
+
+    glm_vec3_cross(ship->direction, (vec3) {0.0f, 1.0f, 0.0f}, axis);
+    angle = glm_vec3_angle(ship->direction, (vec3) {ship->direction[0], 0.0f, ship->direction[2]});
+    if (ship->direction[1] < 0.0f) {
+        angle *= -1;
+    }
+    glm_rotate(model_matrix, angle, axis);
+
+    angle = glm_vec3_angle((vec3) {ship->direction[0], 0.0f, ship->direction[2]}, (vec3) {0.0f, 0.0f, -1.0f});
     if (ship->direction[0] < 0.0f) {
         angle *= -1;
     }

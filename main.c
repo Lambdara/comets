@@ -111,11 +111,15 @@ int main(int argc, char *argv[]) {
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
             glm_vec3_rotate(ship->direction, delta, (vec3) {0.0f, 1.0f, 0.0f});
         }
-        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-            /* camera_location[1] -= (float) delta * camera_speed; */
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            vec3 axis;
+            glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, ship->direction, axis);
+            glm_vec3_rotate(ship->direction, -delta, axis);
         }
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-            /* camera_location[1] += (float) delta * camera_speed; */
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+            vec3 axis;
+            glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, ship->direction, axis);
+            glm_vec3_rotate(ship->direction, delta, axis);
         }
 
         render(window, asteroids, bullets, ship);
