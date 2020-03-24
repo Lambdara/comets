@@ -9,7 +9,7 @@ asteroid_list_t *asteroids;
 bullet_list_t *bullets;
 ship_t *ship;
 
-float max_distance = 1000.0f;
+float max_distance = 10000.0f;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
