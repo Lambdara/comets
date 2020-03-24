@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     bullets = create_bullet_list();
 
     asteroids = create_asteroid_list();
-    for (int i = 0; i < 25; i++) {
+    for (int i = 0; i < 500; i++) {
         float longitude = rand() / (float) RAND_MAX * 3.14159 * 2;
         float colatitude = rand() / (float) RAND_MAX * 3.14159;
         float distance = rand() / (float) RAND_MAX * max_distance;
@@ -43,12 +43,13 @@ int main(int argc, char *argv[]) {
                                                            distance * sin(longitude) * sin(colatitude),
                                                            distance * cos(colatitude)
                                                        },
-                                                       5.0f),
+                                                       25.0f,
+                                                       20.0f),
                                        asteroids);
     }
-    asteroid_t *sun = create_asteroid((vec3) {10000.0f, 5000.0f, 0.0f}, 100.0f);
+    asteroid_t *sun = create_asteroid((vec3) {10000.0f, 5000.0f, 0.0f}, 100.0f, 0.0f);
 
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 1; i++) {
         sun->normals[i][0] = -sun->normals[i][0];
         sun->normals[i][1] = -sun->normals[i][1];
         sun->normals[i][2] = -sun->normals[i][2];
@@ -100,10 +101,10 @@ int main(int argc, char *argv[]) {
 
         // Handle keys
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-            ship->speed += delta * 0.5f;
+            ship->speed += delta * 5.0f;
         }
         if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-            ship->speed -= delta * 0.5f;
+            ship->speed -= delta * 5.0f;
         }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
             glm_vec3_rotate(ship->direction, -delta, (vec3) {0.0f, 1.0f, 0.0f});

@@ -13,50 +13,90 @@ void make_normal(vec3 a, vec3 b, vec3 c, vec3 n) {
     }
 }
 
-asteroid_t *create_asteroid(vec3 location, float radius) {
+void make_vertex(float longitude, float colatitude, float radius, float variation, vec3 vec) {
+    radius = radius + rand() / (float) RAND_MAX * variation - variation / 2;
+    vec[0] = radius*cos(longitude)*sin(colatitude);
+    vec[1] = radius*cos(colatitude);
+    vec[2] = radius*sin(longitude)*sin(colatitude);
+}
+
+asteroid_t *create_asteroid(vec3 location, float radius, float variation) {
     asteroid_t *asteroid = malloc(sizeof(asteroid_t));
 
-    asteroid->vertices_length = 12;
+    asteroid->vertices_length = 36*3*3;
     asteroid->vertices = malloc(asteroid->vertices_length * sizeof(vec3));
     asteroid->normals = malloc(asteroid->vertices_length * sizeof(vec3));
-
-    float longitudes[4];
-    float colatitudes[4];
-
-    vec3 vertices[4];
-
-    for (int i = 0; i < 3; i++) {
-        longitudes[i] = rand() / (float) RAND_MAX * 3.14159 * 2;
-        colatitudes[i] = rand() / (float) RAND_MAX * 3.14159;
-        vertices[i][0] = cos(longitudes[i])*sin(colatitudes[i]);
-        vertices[i][1] = sin(longitudes[i])*sin(colatitudes[i]);
-        vertices[i][2] = cos(colatitudes[i]);
+    
+    vec3 top;
+    make_vertex(0.0f, 0.0f, radius, variation, top);
+    vec3 first_band[6];
+    for (int i = 0; i < 6; i++) {
+        float longitude = 3.14159f / 3 * i;
+        float colatitude = 3.14159f / 4;
+        make_vertex(longitude, colatitude, radius, variation, first_band[i]);
     }
-
-    vertices[3][0] = -(vertices[0][0] + vertices[1][0] + vertices[2][0])/3.0f;
-    vertices[3][1] = -(vertices[0][1] + vertices[1][1] + vertices[2][1])/3.0f;
-    vertices[3][2] = -(vertices[0][2] + vertices[1][2] + vertices[2][2])/3.0f;
-
-    // Have center of mass in the center
-    vec3 com = {0.0f, 0.0f, 0.0f};
-    for(int i = 0; i < 4; i++) {
-        glm_vec3_add(vertices[i], com, com);
+    vec3 second_band[12];
+    for (int i = 0; i < 12; i++) {
+        float longitude = 3.14159f / 6 * i;
+        float colatitude = 3.14159f / 2;
+        make_vertex(longitude, colatitude, radius, variation, second_band[i]);
     }
-    glm_vec3_scale(com, 1.0f/4.0f, com);
-    for(int i = 0; i < 4; i++) {
-        glm_vec3_sub(vertices[i], com, vertices[i]);
+    vec3 third_band[6];
+    for (int i = 0; i < 6; i++) {
+        float longitude = 3.14159f / 3 * i;
+        float colatitude = 3 * 3.14159f / 4;
+        make_vertex(longitude, colatitude, radius, variation, third_band[i]);
     }
-    for(int i = 0; i < 4; i++) {
-        glm_vec3_scale(vertices[i], radius, vertices[i]);
-    }
+    vec3 bottom;
+    make_vertex(0.0f, 3.14159f, radius, variation, bottom);
 
+    // First triangle band
     int v = 0;
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
-            if (i != j)
-                glm_vec3_copy(vertices[j], asteroid->vertices[v++]);
+    for (int i = 0; i < 6; i++) {
+        glm_vec3_copy(top, asteroid->vertices[v++]);
+        glm_vec3_copy(first_band[i], asteroid->vertices[v++]);
+        glm_vec3_copy(first_band[(i+1)%6], asteroid->vertices[v++]);
+    }
 
-    for (int i = 0; i < 4; i++)
+    // Second triangle band */
+    for (int i = 0; i < 6; i++) {
+        glm_vec3_copy(first_band[i], asteroid->vertices[v++]);
+        glm_vec3_copy(second_band[i*2+1], asteroid->vertices[v++]);
+        glm_vec3_copy(first_band[(i+1)%6], asteroid->vertices[v++]);
+        
+        glm_vec3_copy(second_band[i*2], asteroid->vertices[v++]);
+        glm_vec3_copy(second_band[i*2+1], asteroid->vertices[v++]);
+        glm_vec3_copy(first_band[i], asteroid->vertices[v++]);
+
+        glm_vec3_copy(second_band[i*2+1], asteroid->vertices[v++]);
+        glm_vec3_copy(second_band[(i*2+2)%12], asteroid->vertices[v++]);
+        glm_vec3_copy(first_band[(i+1)%6], asteroid->vertices[v++]);
+    }
+    
+    // Third triangle band
+    for (int i = 0; i < 6; i++) {
+        glm_vec3_copy(third_band[i], asteroid->vertices[v++]);
+        glm_vec3_copy(second_band[i*2+1], asteroid->vertices[v++]);
+        glm_vec3_copy(third_band[(i+1)%6], asteroid->vertices[v++]);
+        
+        glm_vec3_copy(second_band[i*2], asteroid->vertices[v++]);
+        glm_vec3_copy(second_band[i*2+1], asteroid->vertices[v++]);
+        glm_vec3_copy(third_band[i], asteroid->vertices[v++]);
+
+        glm_vec3_copy(second_band[i*2+1], asteroid->vertices[v++]);
+        glm_vec3_copy(second_band[(i*2+2)%12], asteroid->vertices[v++]);
+        glm_vec3_copy(third_band[(i+1)%6], asteroid->vertices[v++]);
+    }
+
+    // Fourth triangle band
+    for (int i = 0; i < 6; i++) {
+        glm_vec3_copy(bottom, asteroid->vertices[v++]);
+        glm_vec3_copy(third_band[i], asteroid->vertices[v++]);
+        glm_vec3_copy(third_band[(i+1)%6], asteroid->vertices[v++]);
+    }
+
+    // Make normals
+    for (int i = 0; i < 36; i++)
         for (int j = 0; j < 3; j++)
             make_normal(asteroid->vertices[i*3],
                         asteroid->vertices[i*3+1],
@@ -76,7 +116,7 @@ asteroid_t *create_asteroid(vec3 location, float radius) {
                               rand() / (float) RAND_MAX},
         asteroid->direction);
     glm_vec3_normalize(asteroid->direction);
-    asteroid->speed = rand() / (float) RAND_MAX;
+    asteroid->speed = rand() / (float) RAND_MAX * 250;
 
     glGenBuffers(1, &(asteroid->vbo));
     glGenBuffers(1, &(asteroid->nbo));

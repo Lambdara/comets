@@ -46,7 +46,7 @@ typedef struct bullet_list_t {
 vec3 camera_location;
 float camera_angle;
 
-asteroid_t *create_asteroid(vec3, float);
+asteroid_t *create_asteroid(vec3, float, float);
 
 asteroid_list_t *create_asteroid_list();
 

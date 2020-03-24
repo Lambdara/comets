@@ -12,7 +12,7 @@ void main()
     vec3 light_direction = normalize(light_position - fragment_position);
 
     float diffuse_light = max(dot(light_direction, fragment_normal), 0);
-    float ambient_light = 0.00000000000000000001;
+    float ambient_light = 0.02500000000000000001;
     float light = diffuse_light + ambient_light;
 
     if (length (fragment_position) > 9900.0) {
