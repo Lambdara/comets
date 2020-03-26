@@ -85,6 +85,7 @@ int main(int argc, char *argv[]) {
             glm_vec3_add(bullets_head->this->location, diff, bullets_head->this->location);
             glm_vec3_add(bullets_head->this->location, ship_diff, bullets_head->this->location);
 
+            // Yes officer, this memory leak right here!
             if(glm_vec3_norm(bullets_head->this->location) > max_distance)
                 *link = bullets_head->next;
             else
@@ -108,8 +109,15 @@ int main(int argc, char *argv[]) {
 
         // Check for collisions
         asteroids_head = asteroids;
+        asteroid_list_t **asteroids_link = &asteroids;
+        /*     if(glm_vec3_norm(bullets_head->this->location) > max_distance) */
+        /*         *link = bullets_head->next; */
+        /*     else */
+        /*         link = &(bullets_head->next); */
+
         while(asteroids_head->next != NULL) {
             asteroid_t *asteroid = asteroids_head->this;
+            int asteroid_destroyed = 0;
 
             for (int i = 0; i < asteroid->vertices_length / 3; i++) {
                 vec3 origin, direction, v0, v1, v2;
@@ -127,7 +135,7 @@ int main(int argc, char *argv[]) {
                 glm_vec3_add(v2, asteroid->location, v2);
 
                 bullets_head = bullets;
-
+                bullet_list_t **bullets_link = &bullets;
                 while(bullets_head->next != NULL) {
                     bullet_t *bullet = bullets_head->this;
 
@@ -136,18 +144,26 @@ int main(int argc, char *argv[]) {
 
                     float f = line_triangle_intersect(origin, direction, v0, v1, v2);
 
-                    // We can further enhance this by taking into account the relative speed
                     if (f > 0.0 && f <= glm_vec3_distance(bullet->vertices[0], bullet->vertices[1]) + bullet->speed*delta) {
-                        printf("hit! %f\n", f);
-                        printf("origin:    (%f, %f, %f)\n", origin[0], origin[1], origin[2]);
-                        printf("direction: (%f, %f, %f)\n", direction[0], direction[1], direction[2]);
-                        printf("v0:        (%f, %f, %f)\n", v0[0], v0[1], v0[2]);
-                        printf("v1:        (%f, %f, %f)\n", v1[0], v1[1], v1[2]);
-                        printf("v2:        (%f, %f, %f)\n", v2[0], v2[1], v2[2]);
-                    }
+                        // Warning: Memory leak
+                        *asteroids_link = asteroids_head->next;
+                        asteroid_destroyed = 1;
+                        *bullets_link = bullets_head->next;
+                        i = asteroid->vertices_length;
+                        break;
+                        /* printf("hit! %f\n", f); */
+                        /* printf("origin:    (%f, %f, %f)\n", origin[0], origin[1], origin[2]); */
+                        /* printf("direction: (%f, %f, %f)\n", direction[0], direction[1], direction[2]); */
+                        /* printf("v0:        (%f, %f, %f)\n", v0[0], v0[1], v0[2]); */
+                        /* printf("v1:        (%f, %f, %f)\n", v1[0], v1[1], v1[2]); */
+                        /* printf("v2:        (%f, %f, %f)\n", v2[0], v2[1], v2[2]); */                       
+                    } else
+                        bullets_link = &(bullets_head->next);
                     bullets_head = bullets_head->next;
                 }
             }
+            if (!asteroid_destroyed)
+                asteroids_link = &(asteroids_head->next);
             asteroids_head = asteroids_head->next;
         }
 
