@@ -14,7 +14,7 @@ float max_distance = 100000.0f;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_T && action == GLFW_PRESS){
-        bullet_t *bullet = create_bullet((vec3) {0.0f, 0.0f, 0.0f}, ship->direction, 500.0+ship->speed);
+        bullet_t *bullet = create_bullet((vec3) {0.0f, 0.0f, 0.0f}, ship->direction, 5000.0+ship->speed);
         bullets = bullet_list_cons(bullet, bullets);
     }
 }
