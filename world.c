@@ -3,6 +3,34 @@
 #include <stdlib.h>
 #include <math.h>
 
+float line_triangle_intersect(vec3 origin, vec3 direction, vec3 v0, vec3 v1, vec3 v2) {
+    // Based on https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
+    // Returns -1.0 if no collision
+    const float epsilon = 0.00001;
+    vec3 edge1, edge2, h, s, q;
+    float a,f,u,v;
+    glm_vec3_sub(v1, v0, edge1);
+    glm_vec3_sub(v2, v0, edge2);
+    glm_vec3_cross(direction, edge2, h);
+    a = glm_vec3_dot(edge1, h);
+    if (a > -epsilon && a < epsilon)
+        return -1.0;
+    f = 1.0/a;
+    glm_vec3_sub(origin, v0, s);
+    u = f * glm_vec3_dot(s, h);
+    if (u < 0.0 || u > 1.0)
+        return -1.0;
+    glm_vec3_cross(s, edge1, q);
+    v = f * glm_vec3_dot(direction, q);
+    if (v < 0.0 || u + v > 1.0)
+        return -1.0;
+    float t = f * glm_vec3_dot(edge2, q);
+    if (t > epsilon)
+        return t;
+    else
+        return -1.0;
+}
+
 void make_normal(vec3 a, vec3 b, vec3 c, vec3 n) {
     vec3 v, w;
     glm_vec3_sub(c, a, v);
@@ -116,7 +144,7 @@ asteroid_t *create_asteroid(vec3 location, float radius, float variation) {
                               rand() / (float) RAND_MAX},
         asteroid->direction);
     glm_vec3_normalize(asteroid->direction);
-    asteroid->speed = rand() / (float) RAND_MAX * 250;
+    asteroid->speed = 0.0f; //rand() / (float) RAND_MAX * 250;
 
     glGenBuffers(1, &(asteroid->vbo));
     glGenBuffers(1, &(asteroid->nbo));
@@ -147,7 +175,7 @@ asteroid_list_t *asteroid_list_cons(asteroid_t* asteroid, asteroid_list_t* aster
     return node;
 }
 
-bullet_t *create_bullet(vec3 location, vec3 direction) {
+bullet_t *create_bullet(vec3 location, vec3 direction, float speed) {
     bullet_t *bullet = malloc(sizeof(bullet_t));
     bullet->vertices = malloc(2 * sizeof(vec3));
 
@@ -155,7 +183,7 @@ bullet_t *create_bullet(vec3 location, vec3 direction) {
     glm_vec3_copy(direction, bullet->direction);
     glm_vec3_divs(direction, 10.0f, bullet->vertices[1]);
     glm_vec3_divs(direction, -10.0f, bullet->vertices[0]);
-    bullet->speed = 50.0f;
+    bullet->speed = speed;
 
     return bullet;
 }

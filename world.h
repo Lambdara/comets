@@ -46,13 +46,15 @@ typedef struct bullet_list_t {
 vec3 camera_location;
 float camera_angle;
 
+float line_triangle_intersect(vec3, vec3, vec3, vec3, vec3);
+
 asteroid_t *create_asteroid(vec3, float, float);
 
 asteroid_list_t *create_asteroid_list();
 
 asteroid_list_t *asteroid_list_cons(asteroid_t*, asteroid_list_t*);
 
-bullet_t *create_bullet(vec3, vec3);
+bullet_t *create_bullet(vec3, vec3, float);
 bullet_list_t *create_bullet_list();
 bullet_list_t *bullet_list_cons(bullet_t *, bullet_list_t *);
 
