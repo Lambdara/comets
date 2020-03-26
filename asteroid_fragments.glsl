@@ -15,8 +15,8 @@ void main()
     float ambient_light = 0.02500000000000000001;
     float light = diffuse_light + ambient_light;
 
-    if (length (fragment_position) > 9900.0) {
-        light = light * (10000.0 - length(fragment_position))/1000.0;
+    if (length (fragment_position) > 99000.0) {
+        light = light * (100000.0 - length(fragment_position))/1000.0;
     }
 
     pixel_color = light*vec4(0.8, 0.8, 0.8, 1.0);

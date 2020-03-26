@@ -110,26 +110,29 @@ int main(int argc, char *argv[]) {
         asteroids_head = asteroids;
         while(asteroids_head->next != NULL) {
             asteroid_t *asteroid = asteroids_head->this;
-            bullets_head = bullets;
-            while(bullets_head->next != NULL) {
-                bullet_t *bullet = bullets_head->this;
 
-                for (int i = 0; i < asteroid->vertices_length / 3; i++) {
-                    vec3 origin, direction, v0, v1, v2;
+            for (int i = 0; i < asteroid->vertices_length / 3; i++) {
+                vec3 origin, direction, v0, v1, v2;
+
+                glm_vec3_copy(asteroid->vertices[i*3], v0);
+                glm_vec3_copy(asteroid->vertices[i*3+1], v1);
+                glm_vec3_copy(asteroid->vertices[i*3+2], v2);
+
+                glm_vec3_rotate(v0, asteroid->angle, asteroid->axis);
+                glm_vec3_rotate(v1, asteroid->angle, asteroid->axis);
+                glm_vec3_rotate(v2, asteroid->angle, asteroid->axis);
+
+                glm_vec3_add(v0, asteroid->location, v0);
+                glm_vec3_add(v1, asteroid->location, v1);
+                glm_vec3_add(v2, asteroid->location, v2);
+
+                bullets_head = bullets;
+
+                while(bullets_head->next != NULL) {
+                    bullet_t *bullet = bullets_head->this;
+
                     glm_vec3_add(bullet->location, bullet->vertices[0], origin);
                     glm_vec3_copy(bullet->direction, direction);
-
-                    glm_vec3_copy(asteroid->vertices[i*3], v0);
-                    glm_vec3_copy(asteroid->vertices[i*3+1], v1);
-                    glm_vec3_copy(asteroid->vertices[i*3+2], v2);
-
-                    glm_vec3_rotate(v0, asteroid->angle, asteroid->axis);
-                    glm_vec3_rotate(v1, asteroid->angle, asteroid->axis);
-                    glm_vec3_rotate(v2, asteroid->angle, asteroid->axis);
-
-                    glm_vec3_add(v0, asteroid->location, v0);
-                    glm_vec3_add(v1, asteroid->location, v1);
-                    glm_vec3_add(v2, asteroid->location, v2);
 
                     float f = line_triangle_intersect(origin, direction, v0, v1, v2);
 
@@ -142,9 +145,8 @@ int main(int argc, char *argv[]) {
                         printf("v1:        (%f, %f, %f)\n", v1[0], v1[1], v1[2]);
                         printf("v2:        (%f, %f, %f)\n", v2[0], v2[1], v2[2]);
                     }
+                    bullets_head = bullets_head->next;
                 }
-
-                bullets_head = bullets_head->next;
             }
             asteroids_head = asteroids_head->next;
         }
