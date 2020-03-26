@@ -47,15 +47,15 @@ int main(int argc, char *argv[]) {
                                                        200.0f),
                                        asteroids);
     }
-    asteroid_t *sun = create_asteroid((vec3) {10000.0f, 5000.0f, 0.0f}, 100.0f, 0.0f);
+    /* asteroid_t *sun = create_asteroid((vec3) {10000.0f, 5000.0f, 0.0f}, 100.0f, 0.0f); */
 
-    for (int i = 0; i < 1; i++) {
-        sun->normals[i][0] = -sun->normals[i][0];
-        sun->normals[i][1] = -sun->normals[i][1];
-        sun->normals[i][2] = -sun->normals[i][2];
-    }
+    /* for (int i = 0; i < 1; i++) { */
+    /*     sun->normals[i][0] = -sun->normals[i][0]; */
+    /*     sun->normals[i][1] = -sun->normals[i][1]; */
+    /*     sun->normals[i][2] = -sun->normals[i][2]; */
+    /* } */
 
-    asteroids = asteroid_list_cons(sun, asteroids);
+    /* asteroids = asteroid_list_cons(sun, asteroids); */
 
     double new_time = 0.0d;
     double last_time = glfwGetTime();
