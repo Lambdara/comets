@@ -78,12 +78,17 @@ int main(int argc, char *argv[]) {
 
         // Move bullets
         bullet_list_t *bullets_head = bullets;
+        bullet_list_t **link = &bullets;
         while (bullets_head->next != NULL) {
             vec3 diff;
             glm_vec3_scale(bullets_head->this->direction, delta*bullets_head->this->speed, diff);
             glm_vec3_add(bullets_head->this->location, diff, bullets_head->this->location);
             glm_vec3_add(bullets_head->this->location, ship_diff, bullets_head->this->location);
 
+            if(glm_vec3_norm(bullets_head->this->location) > max_distance)
+                *link = bullets_head->next;
+            else
+                link = &(bullets_head->next);
             bullets_head = bullets_head->next;
         }
 
