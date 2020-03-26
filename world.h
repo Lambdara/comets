@@ -17,6 +17,7 @@ typedef struct {
     float speed;
     float angle;
     vec3 axis;
+    float size;
 } asteroid_t;
 
 typedef struct {

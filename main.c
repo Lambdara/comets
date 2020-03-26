@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define ASTEROID_SIZE 250.0f
+#define ASTEROID_VARIATION 200.0f
+
 GLFWwindow *window;
 
 asteroid_list_t *asteroids;
@@ -43,8 +46,8 @@ int main(int argc, char *argv[]) {
                                                                distance * sin(longitude) * sin(colatitude),
                                                                distance * cos(colatitude)
                                                        },
-                                                       250.0f,
-                                                       200.0f),
+                                                       ASTEROID_SIZE,
+                                                       ASTEROID_VARIATION),
                                        asteroids);
     }
     /* asteroid_t *sun = create_asteroid((vec3) {10000.0f, 5000.0f, 0.0f}, 100.0f, 0.0f); */
@@ -146,6 +149,22 @@ int main(int argc, char *argv[]) {
                         asteroid_destroyed = 1;
                         *bullets_link = bullets_head->next;
                         i = asteroid->vertices_length;
+
+                        float size = asteroid->size;
+                        // Create asteroids
+                        if (size > 0.24f){
+                            size /= 2.0f;
+                            asteroid_t *asteroid1 = create_asteroid(asteroid->location, ASTEROID_SIZE*size, ASTEROID_VARIATION*size);
+                            asteroid_t *asteroid2 = create_asteroid(asteroid->location, ASTEROID_SIZE*size, ASTEROID_VARIATION*size);
+                            asteroid1->size = size;
+                            asteroid2->size = size;
+                            asteroids = asteroid_list_cons(asteroid1, asteroids);
+                            asteroids = asteroid_list_cons(asteroid2, asteroids);
+                            glm_vec3_ortho(bullet->direction, asteroid1->direction);
+                            glm_vec3_copy(asteroid1->direction, asteroid2->direction);
+                            glm_vec3_negate(asteroid2->direction);
+                        }
+
                         break;
                     } else
                         bullets_link = &(bullets_head->next);

@@ -144,7 +144,7 @@ asteroid_t *create_asteroid(vec3 location, float radius, float variation) {
                               rand() / (float) RAND_MAX},
         asteroid->direction);
     glm_vec3_normalize(asteroid->direction);
-    asteroid->speed = 0.0f; //rand() / (float) RAND_MAX * 250;
+    asteroid->speed = rand() / (float) RAND_MAX * 250;
 
     glGenBuffers(1, &(asteroid->vbo));
     glGenBuffers(1, &(asteroid->nbo));
@@ -153,6 +153,8 @@ asteroid_t *create_asteroid(vec3 location, float radius, float variation) {
     glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*asteroid->vertices_length, asteroid->vertices, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, asteroid->nbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*asteroid->vertices_length, asteroid->normals, GL_DYNAMIC_DRAW);
+
+    asteroid->size = 1.0f;
 
     return asteroid;
 }
