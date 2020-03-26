@@ -110,10 +110,6 @@ int main(int argc, char *argv[]) {
         // Check for collisions
         asteroids_head = asteroids;
         asteroid_list_t **asteroids_link = &asteroids;
-        /*     if(glm_vec3_norm(bullets_head->this->location) > max_distance) */
-        /*         *link = bullets_head->next; */
-        /*     else */
-        /*         link = &(bullets_head->next); */
 
         while(asteroids_head->next != NULL) {
             asteroid_t *asteroid = asteroids_head->this;
@@ -151,12 +147,6 @@ int main(int argc, char *argv[]) {
                         *bullets_link = bullets_head->next;
                         i = asteroid->vertices_length;
                         break;
-                        /* printf("hit! %f\n", f); */
-                        /* printf("origin:    (%f, %f, %f)\n", origin[0], origin[1], origin[2]); */
-                        /* printf("direction: (%f, %f, %f)\n", direction[0], direction[1], direction[2]); */
-                        /* printf("v0:        (%f, %f, %f)\n", v0[0], v0[1], v0[2]); */
-                        /* printf("v1:        (%f, %f, %f)\n", v1[0], v1[1], v1[2]); */
-                        /* printf("v2:        (%f, %f, %f)\n", v2[0], v2[1], v2[2]); */                       
                     } else
                         bullets_link = &(bullets_head->next);
                     bullets_head = bullets_head->next;
