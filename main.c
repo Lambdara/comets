@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < 250; i++) {
         float longitude = rand() / (float) RAND_MAX * 3.14159 * 2;
         float colatitude = rand() / (float) RAND_MAX * 3.14159;
-        float distance = rand() / (float) RAND_MAX * max_distance;
+        float distance = rand() / (float) RAND_MAX * (max_distance - 1000.0f) + 1000.0f;
         asteroids = asteroid_list_cons(
                                        create_asteroid(
                                                        (vec3) {
