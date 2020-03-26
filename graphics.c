@@ -274,7 +274,7 @@ int intialize_window(GLFWwindow **window) {
         return 1;
     }
 
-    glfwWindowHint(GLFW_SAMPLES, 8);
+    glfwWindowHint(GLFW_SAMPLES, 4);
     *window = glfwCreateWindow(1920, 1080, "Particles", NULL, NULL);
 
     if (!*window) {
