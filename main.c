@@ -11,6 +11,7 @@ GLFWwindow *window;
 asteroid_list_t *asteroids;
 bullet_list_t *bullets;
 ship_t *ship;
+int score = 0;
 
 float max_distance = 100000.0f;
 
@@ -153,6 +154,7 @@ int main(int argc, char *argv[]) {
                         float size = asteroid->size;
                         // Create asteroids
                         if (size > 0.24f){
+                            score++;
                             size /= 2.0f;
                             asteroid_t *asteroid1 = create_asteroid(asteroid->location, ASTEROID_SIZE*size, ASTEROID_VARIATION*size);
                             asteroid_t *asteroid2 = create_asteroid(asteroid->location, ASTEROID_SIZE*size, ASTEROID_VARIATION*size);
@@ -163,6 +165,22 @@ int main(int argc, char *argv[]) {
                             glm_vec3_ortho(bullet->direction, asteroid1->direction);
                             glm_vec3_copy(asteroid1->direction, asteroid2->direction);
                             glm_vec3_negate(asteroid2->direction);
+
+                            float longitude = rand() / (float) RAND_MAX * 3.14159 * 2;
+                            float colatitude = rand() / (float) RAND_MAX * 3.14159;
+                            float distance = rand() / (float) RAND_MAX * (max_distance - 1000.0f) + 1000.0f;
+
+                            asteroids = asteroid_list_cons(
+                                create_asteroid(
+                                                (vec3) {
+                                                        distance * cos(longitude) * sin(colatitude),
+                                                        distance * sin(longitude) * sin(colatitude),
+                                                        distance * cos(colatitude)
+                                                },
+                                                ASTEROID_SIZE,
+                                                ASTEROID_VARIATION),
+                                asteroids);
+                            asteroids->this->speed += (float) score*1000;
                         }
 
                         break;
