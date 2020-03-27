@@ -43,7 +43,7 @@ void render(GLFWwindow *window, asteroid_list_t* asteroids, bullet_list_t *bulle
     vec3 up = {0.0f, 1.0f, 0.0f};
     glm_look(eye, eye_dir, up, view_matrix);
 
-    glm_perspective(3.14159265358979323f/2.0f, 16.0f/9.0f, 10.0f, 100000.0f, projection_matrix);
+    glm_perspective(3.14159265358979323f/2.0f, 16.0f/9.0f, 1.0f, 100000.0f, projection_matrix);
 
 
     GLuint vbo;
