@@ -5,7 +5,8 @@ Comets is an attempt at making a 3D game based on the 2D game 'Asteroids'.
 - Asteroids are simple 3D models, floating in space. They spawn at some distance from the player and loop around when far enough behind the player, to create a compact but "open" world. (This actually makes the world into a three-torus)
 
 ## Plan:
-- Implement score tracking and display
+- Implement score display
+- Implement getting hit and game over
 
 Optional, if I still care after everything's working:
 - Actually make it fun
