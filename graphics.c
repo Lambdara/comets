@@ -1,4 +1,6 @@
 #include "graphics.h"
+#define GLT_IMPLEMENTATION
+#include "gltext/gltext.h"
 
 unsigned int asteroid_shader_program, bullet_shader_program;
 
@@ -13,7 +15,7 @@ void bullet_model_matrix(bullet_t* bullet, mat4 matrix) {
     glm_translate(matrix, bullet->location);
 }
 
-void render(GLFWwindow *window, asteroid_list_t* asteroids, bullet_list_t *bullets, ship_t *ship) {
+void render(GLFWwindow *window, asteroid_list_t* asteroids, bullet_list_t *bullets, ship_t *ship, int score) {
     vec3 eye_dir;
     mat4 view_matrix;
     mat4 projection_matrix;
@@ -124,6 +126,19 @@ void render(GLFWwindow *window, asteroid_list_t* asteroids, bullet_list_t *bulle
     }
 
     glDisableVertexAttribArray(0);
+
+    gltInit();
+    GLTtext *text = gltCreateText();
+    char string[64];
+    sprintf(string, "Score: %i", score);
+    gltSetText(text, string);
+    gltBeginDraw();
+
+    gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+    gltDrawText2D(text, 0, 0, 1.0f);
+    gltEndDraw();
+    gltTerminate();
+
     glfwSwapBuffers(window);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &nbo);

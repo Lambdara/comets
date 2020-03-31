@@ -17,3 +17,7 @@ Optional, if I still care after everything's working:
 - Add local score saving
 - Add shadows
 - Add "dust" particles, the visibility of which is determined by shadows, giving a reverse sunbeam effect left by asteroids
+
+## Libraries
+
+Comets makes use of GLFW, OpenGL, [cglm](https://github.com/recp/cglm) and [glText](https://github.com/vallentin/glText).

@@ -15,7 +15,7 @@
 
 int intialize_window(GLFWwindow **);
 
-void render (GLFWwindow *, asteroid_list_t *, bullet_list_t *, ship_t *);
+void render (GLFWwindow *, asteroid_list_t *, bullet_list_t *, ship_t *, int);
 
 void asteroid_translation_matrix(asteroid_t*, mat4);
 
