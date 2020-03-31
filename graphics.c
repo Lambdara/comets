@@ -91,7 +91,7 @@ void render(GLFWwindow *window, asteroid_list_t* asteroids, bullet_list_t *bulle
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
         glUniformMatrix4fv(model_matrix_loc, 1, GL_FALSE, model_matrix[0]);
-        glDrawArrays(GL_TRIANGLES, 0, asteroid->vertices_length/3);
+        glDrawArrays(GL_TRIANGLES, 0, asteroid->vertices_length);
 
         asteroids_head = asteroids_head->next;
     }

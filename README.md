@@ -8,6 +8,7 @@ Comets is an attempt at making a 3D game based on the 2D game 'Asteroids'.
 - Implement score tracking and display
 
 Optional, if I still care after everything's working:
+- Actually make it fun
 - Before doing vertex-specific collision check first try rough bounding-box collision to see if it's even necessary.
 - Implement a proper sun (visual only, should be drawn out of accessible map)
 - Implement newtonian movement (turning doesn't change direction of movement, just of acceleration)

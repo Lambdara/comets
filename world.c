@@ -51,7 +51,7 @@ void make_vertex(float longitude, float colatitude, float radius, float variatio
 asteroid_t *create_asteroid(vec3 location, float radius, float variation) {
     asteroid_t *asteroid = malloc(sizeof(asteroid_t));
 
-    asteroid->vertices_length = 36*3*3;
+    asteroid->vertices_length = 48*3;
     asteroid->vertices = malloc(asteroid->vertices_length * sizeof(vec3));
     asteroid->normals = malloc(asteroid->vertices_length * sizeof(vec3));
     
