@@ -15,7 +15,7 @@ void bullet_model_matrix(bullet_t* bullet, mat4 matrix) {
     glm_translate(matrix, bullet->location);
 }
 
-void render(GLFWwindow *window, asteroid_list_t* asteroids, bullet_list_t *bullets, ship_t *ship, int score) {
+void render(GLFWwindow *window, asteroid_list_t* asteroids, bullet_list_t *bullets, ship_t *ship, int score, bool running) {
     vec3 eye_dir;
     mat4 view_matrix;
     mat4 projection_matrix;
@@ -67,17 +67,19 @@ void render(GLFWwindow *window, asteroid_list_t* asteroids, bullet_list_t *bulle
     glUniformMatrix4fv(view_matrix_loc, 1, GL_FALSE, view_matrix[0]);
     glUniformMatrix4fv(projection_matrix_loc, 1, GL_FALSE, projection_matrix[0]);
 
-    // Draw ship
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*18, ship->vertices, GL_DYNAMIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    if (running) {
+        // Draw ship
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*18, ship->vertices, GL_DYNAMIC_DRAW);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, nbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*18, ship->normals, GL_DYNAMIC_DRAW);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, nbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*18, ship->normals, GL_DYNAMIC_DRAW);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    glUniformMatrix4fv(model_matrix_loc, 1, GL_FALSE, model_matrix[0]);
-    glDrawArrays(GL_TRIANGLES, 0, 18);
+        glUniformMatrix4fv(model_matrix_loc, 1, GL_FALSE, model_matrix[0]);
+        glDrawArrays(GL_TRIANGLES, 0, 18);
+    }
 
     // Draw asteroids
     asteroid_list_t *asteroids_head = asteroids;
@@ -130,7 +132,10 @@ void render(GLFWwindow *window, asteroid_list_t* asteroids, bullet_list_t *bulle
     gltInit();
     GLTtext *text = gltCreateText();
     char string[64];
-    sprintf(string, "Score: %i", score);
+    if (running)
+        sprintf(string, "Score: %i\n", score);
+    else
+        sprintf(string, "Score: %i\nGame over", score);
     gltSetText(text, string);
     gltBeginDraw();
 

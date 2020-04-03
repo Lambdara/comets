@@ -13,6 +13,7 @@ asteroid_list_t *asteroids;
 bullet_list_t *bullets;
 ship_t *ship;
 int score = 0;
+bool running = true;
 
 float max_distance = 100000.0f;
 
@@ -146,7 +147,7 @@ int main(int argc, char *argv[]) {
                     float distance;
                     bool intersection;
 
-                    if (glm_vec3_distance(asteroid->location, bullet->location) < (bullet->speed + asteroid->speed)*delta + MINIMUM_COLLISION_DISTANCE)
+                    if (glm_vec3_distance(asteroid->location, bullet->location) > (bullet->speed + asteroid->speed)*delta + MINIMUM_COLLISION_DISTANCE*asteroid->size)
                         intersection = 0;
                     else
                         intersection = glm_ray_triangle(origin, direction, v0, v1, v2, &distance);
@@ -201,31 +202,42 @@ int main(int argc, char *argv[]) {
             asteroids_head = asteroids_head->next;
         }
 
-        // Handle keys
-        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-            ship->speed += delta * 500.0f;
-        }
-        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-            ship->speed -= delta * 500.0f;
-        }
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            glm_vec3_rotate(ship->direction, -delta, (vec3) {0.0f, 1.0f, 0.0f});
-        }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            glm_vec3_rotate(ship->direction, delta, (vec3) {0.0f, 1.0f, 0.0f});
-        }
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            vec3 axis;
-            glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, ship->direction, axis);
-            glm_vec3_rotate(ship->direction, -delta, axis);
-        }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            vec3 axis;
-            glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, ship->direction, axis);
-            glm_vec3_rotate(ship->direction, delta, axis);
+        asteroids_head = asteroids;
+        while(asteroids_head->next != NULL) {
+            asteroid_t *asteroid = asteroids_head->this;
+            if(glm_vec3_norm(asteroid->location) < MINIMUM_COLLISION_DISTANCE*asteroid->size) {
+                running = false;
+                ship->speed = 0.0f;
+            }
+            asteroids_head = asteroids_head->next;
         }
 
-        render(window, asteroids, bullets, ship, score);
+        if (running) {
+            // Handle keys
+            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+                ship->speed += delta * 500.0f;
+            }
+            if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+                ship->speed -= delta * 500.0f;
+            }
+            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+                glm_vec3_rotate(ship->direction, -delta, (vec3) {0.0f, 1.0f, 0.0f});
+            }
+            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+                glm_vec3_rotate(ship->direction, delta, (vec3) {0.0f, 1.0f, 0.0f});
+            }
+            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+                vec3 axis;
+                glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, ship->direction, axis);
+                glm_vec3_rotate(ship->direction, -delta, axis);
+            }
+            if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+                vec3 axis;
+                glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, ship->direction, axis);
+                glm_vec3_rotate(ship->direction, delta, axis);
+            }
+        }
+        render(window, asteroids, bullets, ship, score, running);
         glfwPollEvents();
     }
 
