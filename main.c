@@ -5,6 +5,7 @@
 
 #define ASTEROID_SIZE 250.0f
 #define ASTEROID_VARIATION 200.0f
+#define MINIMUM_COLLISION_DISTANCE 450.0f
 
 GLFWwindow *window;
 
@@ -142,9 +143,15 @@ int main(int argc, char *argv[]) {
                     glm_vec3_add(bullet->location, bullet->vertices[0], origin);
                     glm_vec3_copy(bullet->direction, direction);
 
-                    float f = line_triangle_intersect(origin, direction, v0, v1, v2);
+                    float distance;
+                    bool intersection;
 
-                    if (f > 0.0 && f <= glm_vec3_distance(bullet->vertices[0], bullet->vertices[1]) + bullet->speed*delta) {
+                    if (glm_vec3_norm(asteroid->location) < (asteroid->speed + ship->speed)*delta)
+                        intersection = 0;
+                    else
+                        intersection = glm_ray_triangle(origin, direction, v0, v1, v2, &distance);
+
+                    if (intersection && distance <= glm_vec3_distance(bullet->vertices[0], bullet->vertices[1]) + bullet->speed*delta) {
                         // Warning: Memory leak
                         *asteroids_link = asteroids_head->next;
                         asteroid_destroyed = 1;
