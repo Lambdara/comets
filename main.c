@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
                     float distance;
                     bool intersection;
 
-                    if (glm_vec3_norm(asteroid->location) < (asteroid->speed + ship->speed)*delta)
+                    if (glm_vec3_norm(asteroid->location) < (bullet->speed + ship->speed)*delta)
                         intersection = 0;
                     else
                         intersection = glm_ray_triangle(origin, direction, v0, v1, v2, &distance);
