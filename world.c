@@ -155,7 +155,8 @@ bullet_t *create_bullet(vec3 location, vec3 direction, float speed) {
 
     glm_vec3_copy(location, bullet->location);
     glm_vec3_copy(direction, bullet->direction);
-    glm_vec3_scale(direction, 1000.0f, bullet->vertices[1]);
+    glm_vec3_normalize(direction);
+    glm_vec3_scale(direction, 1.0f, bullet->vertices[1]);
     glm_vec3_scale(direction, 0.0f, bullet->vertices[0]);
     bullet->speed = speed;
 

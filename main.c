@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define ASTEROID_SIZE 250.0f
-#define ASTEROID_VARIATION 200.0f
-#define MINIMUM_COLLISION_DISTANCE 450.0f
+#define ASTEROID_SIZE 24.0f
+#define ASTEROID_VARIATION 12.0f
+#define MINIMUM_COLLISION_DISTANCE 36.0f
 
 GLFWwindow *window;
 
@@ -15,12 +15,12 @@ ship_t *ship;
 int score = 0;
 bool running = true;
 
-float max_distance = 100000.0f;
+float max_distance = 10000.0f;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_T && action == GLFW_PRESS){
-        bullet_t *bullet = create_bullet((vec3) {0.0f, 0.0f, 0.0f}, ship->direction, 5000.0+ship->speed);
+        bullet_t *bullet = create_bullet((vec3) {0.0f, 0.0f, 0.0f}, ship->direction, 700.0+ship->speed);
         bullets = bullet_list_cons(bullet, bullets);
     }
 }
@@ -215,10 +215,10 @@ int main(int argc, char *argv[]) {
         if (running) {
             // Handle keys
             if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-                ship->speed += delta * 500.0f;
+                ship->speed += delta * 120.0f;
             }
             if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-                ship->speed -= delta * 500.0f;
+                ship->speed -= delta * 120.0f;
             }
             if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
                 glm_vec3_rotate(ship->direction, -delta, (vec3) {0.0f, 1.0f, 0.0f});
