@@ -6,7 +6,6 @@ Comets is an attempt at making a 3D game based on the 2D game 'Asteroids'.
 
 ## Plan:
 - More precise ship-asteroid collision check
-- Better looking lasers
 
 Optional, if I still care after everything's working:
 - Actually make it fun
