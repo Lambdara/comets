@@ -15,7 +15,13 @@ void bullet_model_matrix(bullet_t* bullet, mat4 matrix) {
     glm_translate(matrix, bullet->location);
 }
 
-void render(GLFWwindow *window, asteroid_list_t* asteroids, bullet_list_t *bullets, ship_t *ship, int score, bool running) {
+void render(GLFWwindow *window, world_t *world) {
+    asteroid_list_t* asteroids = world->asteroids;
+    bullet_list_t *bullets = world->bullets;
+    ship_t *ship = world->ship;
+    int score = world->score;
+    bool running = world->running;
+
     vec3 eye_dir;
     mat4 view_matrix;
     mat4 projection_matrix;

@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
                 glm_vec3_rotate(world->ship->direction, delta, axis);
             }
         }
-        render(window, world->asteroids, world->bullets, world->ship, world->score, world->running);
+        render(window, world);
         glfwPollEvents();
     }
 
