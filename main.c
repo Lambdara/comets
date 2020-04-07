@@ -46,15 +46,6 @@ int main(int argc, char *argv[]) {
                                                        ASTEROID_VARIATION),
                                        world->asteroids);
     }
-    /* asteroid_t *sun = create_asteroid((vec3) {10000.0f, 5000.0f, 0.0f}, 100.0f, 0.0f); */
-
-    /* for (int i = 0; i < 1; i++) { */
-    /*     sun->normals[i][0] = -sun->normals[i][0]; */
-    /*     sun->normals[i][1] = -sun->normals[i][1]; */
-    /*     sun->normals[i][2] = -sun->normals[i][2]; */
-    /* } */
-
-    /* world->asteroids = asteroid_list_cons(sun, world->asteroids); */
 
     double new_time = 0.0d;
     double last_time = glfwGetTime();
