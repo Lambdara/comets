@@ -1,6 +1,10 @@
 # Comets
 Comets is an attempt at making a 3D game based on the 2D game 'Asteroids'.
 
+## Screenshots
+![screen1](readme_assets/screen1.png)
+![screen2](readme_assets/screen2.png)
+
 ## Architecture
 - Asteroids are simple 3D models, floating in space. They spawn at some distance from the player and loop around when far enough behind the player, to create a compact but "open" world. (This actually makes the world into a three-torus, which ironically is compact)
 
