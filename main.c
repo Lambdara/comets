@@ -9,40 +9,33 @@
 
 GLFWwindow *window;
 
-asteroid_list_t *asteroids;
-bullet_list_t *bullets;
-ship_t *ship;
-int score = 0;
-bool running = true;
+world_t *world;
 
 float max_distance = 10000.0f;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_T && action == GLFW_PRESS){
-        bullet_t *bullet = create_bullet((vec3) {0.0f, 0.0f, 0.0f}, ship->direction, 700.0+ship->speed);
-        bullets = bullet_list_cons(bullet, bullets);
+        bullet_t *bullet = create_bullet((vec3) {0.0f, 0.0f, 0.0f}, world->ship->direction, 700.0+world->ship->speed);
+        world->bullets = bullet_list_cons(bullet, world->bullets);
     }
 }
 
 int main(int argc, char *argv[]) {
     srand(time(0));
 
+    world = create_world();
+
     int error = intialize_window(&window);
     if (error)
         return error;
     glfwSetKeyCallback(window, key_callback);
 
-    ship = create_ship((vec3) {0.0f, 0.0f, -1.0f});
-
-    bullets = create_bullet_list();
-
-    asteroids = create_asteroid_list();
     for (int i = 0; i < 250; i++) {
         float longitude = rand() / (float) RAND_MAX * 3.14159 * 2;
         float colatitude = rand() / (float) RAND_MAX * 3.14159;
         float distance = rand() / (float) RAND_MAX * (max_distance - 1000.0f) + 1000.0f;
-        asteroids = asteroid_list_cons(
+        world->asteroids = asteroid_list_cons(
                                        create_asteroid(
                                                        (vec3) {
                                                                distance * cos(longitude) * sin(colatitude),
@@ -51,7 +44,7 @@ int main(int argc, char *argv[]) {
                                                        },
                                                        ASTEROID_SIZE,
                                                        ASTEROID_VARIATION),
-                                       asteroids);
+                                       world->asteroids);
     }
     /* asteroid_t *sun = create_asteroid((vec3) {10000.0f, 5000.0f, 0.0f}, 100.0f, 0.0f); */
 
@@ -61,7 +54,7 @@ int main(int argc, char *argv[]) {
     /*     sun->normals[i][2] = -sun->normals[i][2]; */
     /* } */
 
-    /* asteroids = asteroid_list_cons(sun, asteroids); */
+    /* world->asteroids = asteroid_list_cons(sun, world->asteroids); */
 
     double new_time = 0.0d;
     double last_time = glfwGetTime();
@@ -73,18 +66,18 @@ int main(int argc, char *argv[]) {
         last_time = new_time;
 
         // Handle rotations
-        asteroid_list_t *asteroids_head = asteroids;
+        asteroid_list_t *asteroids_head = world->asteroids;
         while (asteroids_head->next != NULL){
             asteroids_head->this->angle += asteroids_head->this->rotation_speed * delta;
             asteroids_head = asteroids_head->next;
         }
 
         vec3 ship_diff;
-        glm_vec3_scale(ship->direction, -ship->speed*delta, ship_diff);
+        glm_vec3_scale(world->ship->direction, -world->ship->speed*delta, ship_diff);
 
-        // Move bullets
-        bullet_list_t *bullets_head = bullets;
-        bullet_list_t **link = &bullets;
+        // Move world->bullets
+        bullet_list_t *bullets_head = world->bullets;
+        bullet_list_t **link = &(world->bullets);
         while (bullets_head->next != NULL) {
             vec3 diff;
             glm_vec3_scale(bullets_head->this->direction, delta*bullets_head->this->speed, diff);
@@ -99,8 +92,8 @@ int main(int argc, char *argv[]) {
             bullets_head = bullets_head->next;
         }
 
-        // Move asteroids
-        asteroids_head = asteroids;
+        // Move world->asteroids
+        asteroids_head = world->asteroids;
         while (asteroids_head->next != NULL) {
             vec3 diff;
             glm_vec3_scale(asteroids_head->this->direction, delta*asteroids_head->this->speed, diff);
@@ -114,8 +107,8 @@ int main(int argc, char *argv[]) {
         }
 
         // Check for collisions
-        asteroids_head = asteroids;
-        asteroid_list_t **asteroids_link = &asteroids;
+        asteroids_head = world->asteroids;
+        asteroid_list_t **asteroids_link = &(world->asteroids);
 
         while(asteroids_head->next != NULL) {
             asteroid_t *asteroid = asteroids_head->this;
@@ -136,8 +129,8 @@ int main(int argc, char *argv[]) {
                 glm_vec3_add(v1, asteroid->location, v1);
                 glm_vec3_add(v2, asteroid->location, v2);
 
-                bullets_head = bullets;
-                bullet_list_t **bullets_link = &bullets;
+                bullets_head = world->bullets;
+                bullet_list_t **bullets_link = &(world->bullets);
                 while(bullets_head->next != NULL) {
                     bullet_t *bullet = bullets_head->this;
 
@@ -160,16 +153,16 @@ int main(int argc, char *argv[]) {
                         i = asteroid->vertices_length;
 
                         float size = asteroid->size;
-                        // Create asteroids
+                        // Create world->asteroids
                         if (size > 0.24f){
-                            score++;
+                            world->score++;
                             size /= 2.0f;
                             asteroid_t *asteroid1 = create_asteroid(asteroid->location, ASTEROID_SIZE*size, ASTEROID_VARIATION*size);
                             asteroid_t *asteroid2 = create_asteroid(asteroid->location, ASTEROID_SIZE*size, ASTEROID_VARIATION*size);
                             asteroid1->size = size;
                             asteroid2->size = size;
-                            asteroids = asteroid_list_cons(asteroid1, asteroids);
-                            asteroids = asteroid_list_cons(asteroid2, asteroids);
+                            world->asteroids = asteroid_list_cons(asteroid1, world->asteroids);
+                            world->asteroids = asteroid_list_cons(asteroid2, world->asteroids);
                             glm_vec3_ortho(bullet->direction, asteroid1->direction);
                             glm_vec3_copy(asteroid1->direction, asteroid2->direction);
                             glm_vec3_negate(asteroid2->direction);
@@ -178,7 +171,7 @@ int main(int argc, char *argv[]) {
                             float colatitude = rand() / (float) RAND_MAX * 3.14159;
                             float distance = rand() / (float) RAND_MAX * (max_distance - 1000.0f) + 1000.0f;
 
-                            asteroids = asteroid_list_cons(
+                            world->asteroids = asteroid_list_cons(
                                 create_asteroid(
                                                 (vec3) {
                                                         distance * cos(longitude) * sin(colatitude),
@@ -187,8 +180,8 @@ int main(int argc, char *argv[]) {
                                                 },
                                                 ASTEROID_SIZE,
                                                 ASTEROID_VARIATION),
-                                asteroids);
-                            asteroids->this->speed += (float) score*1000;
+                                world->asteroids);
+                            world->asteroids->this->speed += (float) world->score*1000;
                         }
 
                         break;
@@ -202,42 +195,42 @@ int main(int argc, char *argv[]) {
             asteroids_head = asteroids_head->next;
         }
 
-        asteroids_head = asteroids;
+        asteroids_head = world->asteroids;
         while(asteroids_head->next != NULL) {
             asteroid_t *asteroid = asteroids_head->this;
             if(glm_vec3_norm(asteroid->location) < MINIMUM_COLLISION_DISTANCE*asteroid->size) {
-                running = false;
-                ship->speed = 0.0f;
+                world->running = false;
+                world->ship->speed = 0.0f;
             }
             asteroids_head = asteroids_head->next;
         }
 
-        if (running) {
+        if (world->running) {
             // Handle keys
             if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-                ship->speed += delta * 120.0f;
+                world->ship->speed += delta * 120.0f;
             }
             if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-                ship->speed -= delta * 120.0f;
+                world->ship->speed -= delta * 120.0f;
             }
             if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-                glm_vec3_rotate(ship->direction, -delta, (vec3) {0.0f, 1.0f, 0.0f});
+                glm_vec3_rotate(world->ship->direction, -delta, (vec3) {0.0f, 1.0f, 0.0f});
             }
             if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-                glm_vec3_rotate(ship->direction, delta, (vec3) {0.0f, 1.0f, 0.0f});
+                glm_vec3_rotate(world->ship->direction, delta, (vec3) {0.0f, 1.0f, 0.0f});
             }
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
                 vec3 axis;
-                glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, ship->direction, axis);
-                glm_vec3_rotate(ship->direction, -delta, axis);
+                glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, world->ship->direction, axis);
+                glm_vec3_rotate(world->ship->direction, -delta, axis);
             }
             if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
                 vec3 axis;
-                glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, ship->direction, axis);
-                glm_vec3_rotate(ship->direction, delta, axis);
+                glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, world->ship->direction, axis);
+                glm_vec3_rotate(world->ship->direction, delta, axis);
             }
         }
-        render(window, asteroids, bullets, ship, score, running);
+        render(window, world->asteroids, world->bullets, world->ship, world->score, world->running);
         glfwPollEvents();
     }
 

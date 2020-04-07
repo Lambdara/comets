@@ -44,8 +44,18 @@ typedef struct bullet_list_t {
     struct bullet_list_t *next;
 } bullet_list_t;
 
+typedef struct {
+    asteroid_list_t *asteroids;
+    bullet_list_t *bullets;
+    ship_t *ship;
+    int score;
+    bool running;
+} world_t;
+
 vec3 camera_location;
 float camera_angle;
+
+world_t *create_world();
 
 asteroid_t *create_asteroid(vec3, float, float);
 

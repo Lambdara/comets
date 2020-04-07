@@ -3,6 +3,17 @@
 #include <stdlib.h>
 #include <math.h>
 
+world_t *create_world() {
+    world_t *world = malloc(sizeof(world_t));
+    world->asteroids = create_asteroid_list();
+    world->bullets = create_bullet_list();
+    world->ship = create_ship((vec3) {0.0f, 0.0f, -1.0f});
+    world->score = 0;
+    world->running = true;
+
+    return world;
+}
+
 void make_normal(vec3 a, vec3 b, vec3 c, vec3 n) {
     vec3 v, w;
     glm_vec3_sub(c, a, v);
