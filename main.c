@@ -11,7 +11,7 @@ GLFWwindow *window;
 
 world_t *world;
 
-float max_distance = 10000.0f;
+float max_distance = 1000.0f;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -31,10 +31,11 @@ int main(int argc, char *argv[]) {
         return error;
     glfwSetKeyCallback(window, key_callback);
 
+    // Generate asteroids
     for (int i = 0; i < 250; i++) {
         float longitude = rand() / (float) RAND_MAX * 3.14159 * 2;
         float colatitude = rand() / (float) RAND_MAX * 3.14159;
-        float distance = rand() / (float) RAND_MAX * (max_distance - 1000.0f) + 1000.0f;
+        float distance = rand() / (float) RAND_MAX * (max_distance - 750.0f) + 250.0f;
         world->asteroids = asteroid_list_cons(
                                        create_asteroid(
                                                        (vec3) {
