@@ -1,6 +1,6 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
-
+#define GLT_IMPLEMENTATION
 #define ASTEROID_VERTEX_SHADER_PATH "asteroid_vertices.glsl"
 #define ASTEROID_FRAGMENT_SHADER_PATH "asteroid_fragments.glsl"
 #define BULLET_VERTEX_SHADER_PATH "bullet_vertices.glsl"
@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <math.h>
 #include "world.h"
+
+#include "gltext/gltext.h"
 
 int intialize_window(GLFWwindow **);
 

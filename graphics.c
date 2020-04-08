@@ -1,6 +1,4 @@
 #include "graphics.h"
-#define GLT_IMPLEMENTATION
-#include "gltext/gltext.h"
 
 unsigned int asteroid_shader_program, bullet_shader_program;
 
