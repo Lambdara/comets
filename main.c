@@ -8,10 +8,51 @@
 #define MINIMUM_COLLISION_DISTANCE 24.0f
 
 GLFWwindow *window;
-
 world_t *world;
-
 float max_distance = 1000.0f;
+
+void move_objects(float delta){
+    // Handle rotations
+        asteroid_list_t *asteroids_head = world->asteroids;
+    while (asteroids_head->next != NULL){
+        asteroids_head->this->angle += asteroids_head->this->rotation_speed * delta;
+        asteroids_head = asteroids_head->next;
+    }
+
+    vec3 ship_diff;
+    glm_vec3_scale(world->ship->direction, -world->ship->speed*delta, ship_diff);
+
+    // Move world->bullets
+    bullet_list_t *bullets_head = world->bullets;
+    bullet_list_t **link = &(world->bullets);
+    while (bullets_head->next != NULL) {
+        vec3 diff;
+        glm_vec3_scale(bullets_head->this->direction, delta*bullets_head->this->speed, diff);
+        glm_vec3_add(bullets_head->this->location, diff, bullets_head->this->location);
+        glm_vec3_add(bullets_head->this->location, ship_diff, bullets_head->this->location);
+
+        // Yes officer, this memory leak right here!
+        if(glm_vec3_norm(bullets_head->this->location) > max_distance)
+            *link = bullets_head->next;
+        else
+            link = &(bullets_head->next);
+        bullets_head = bullets_head->next;
+    }
+
+    // Move world->asteroids
+    asteroids_head = world->asteroids;
+    while (asteroids_head->next != NULL) {
+        vec3 diff;
+        glm_vec3_scale(asteroids_head->this->direction, delta*asteroids_head->this->speed, diff);
+        glm_vec3_add(asteroids_head->this->location, diff, asteroids_head->this->location);
+        glm_vec3_add(asteroids_head->this->location, ship_diff, asteroids_head->this->location);
+        if (glm_vec3_norm(asteroids_head->this->location) > max_distance) {
+            glm_vec3_negate(asteroids_head->this->location);
+        }
+
+        asteroids_head = asteroids_head->next;
+    }
+}
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -58,49 +99,14 @@ int main(int argc, char *argv[]) {
         delta = new_time - last_time;
         last_time = new_time;
 
-        // Handle rotations
-        asteroid_list_t *asteroids_head = world->asteroids;
-        while (asteroids_head->next != NULL){
-            asteroids_head->this->angle += asteroids_head->this->rotation_speed * delta;
-            asteroids_head = asteroids_head->next;
-        }
+        // Update world
+        move_objects(delta);
+        //        process_collisions(delta);
 
-        vec3 ship_diff;
-        glm_vec3_scale(world->ship->direction, -world->ship->speed*delta, ship_diff);
 
-        // Move world->bullets
-        bullet_list_t *bullets_head = world->bullets;
-        bullet_list_t **link = &(world->bullets);
-        while (bullets_head->next != NULL) {
-            vec3 diff;
-            glm_vec3_scale(bullets_head->this->direction, delta*bullets_head->this->speed, diff);
-            glm_vec3_add(bullets_head->this->location, diff, bullets_head->this->location);
-            glm_vec3_add(bullets_head->this->location, ship_diff, bullets_head->this->location);
-
-            // Yes officer, this memory leak right here!
-            if(glm_vec3_norm(bullets_head->this->location) > max_distance)
-                *link = bullets_head->next;
-            else
-                link = &(bullets_head->next);
-            bullets_head = bullets_head->next;
-        }
-
-        // Move world->asteroids
-        asteroids_head = world->asteroids;
-        while (asteroids_head->next != NULL) {
-            vec3 diff;
-            glm_vec3_scale(asteroids_head->this->direction, delta*asteroids_head->this->speed, diff);
-            glm_vec3_add(asteroids_head->this->location, diff, asteroids_head->this->location);
-            glm_vec3_add(asteroids_head->this->location, ship_diff, asteroids_head->this->location);
-            if (glm_vec3_norm(asteroids_head->this->location) > max_distance) {
-                glm_vec3_negate(asteroids_head->this->location);
-            }
-
-            asteroids_head = asteroids_head->next;
-        }
 
         // Check for collisions
-        asteroids_head = world->asteroids;
+        asteroid_list_t *asteroids_head = world->asteroids;
         asteroid_list_t **asteroids_link = &(world->asteroids);
 
         while(asteroids_head->next != NULL) {
@@ -122,7 +128,7 @@ int main(int argc, char *argv[]) {
                 glm_vec3_add(v1, asteroid->location, v1);
                 glm_vec3_add(v2, asteroid->location, v2);
 
-                bullets_head = world->bullets;
+                bullet_list_t *bullets_head = world->bullets;
                 bullet_list_t **bullets_link = &(world->bullets);
                 while(bullets_head->next != NULL) {
                     bullet_t *bullet = bullets_head->this;
