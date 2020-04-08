@@ -155,12 +155,14 @@ void render(GLFWwindow *window, world_t *world) {
     glDeleteBuffers(1, &nbo);
 }
 
-void add_shaders() {
+void add_shader_program(char *vertex_shader_path,
+                        char *fragment_shader_path,
+                        unsigned int *shader_program_ptr) {
     int length;
 
     // Read vertex shader from file
     char *vertex_shader_source;
-    FILE *vertex_shader_file = fopen(ASTEROID_VERTEX_SHADER_PATH, "rb");
+    FILE *vertex_shader_file = fopen(vertex_shader_path, "rb");
     if (vertex_shader_file) {
         fseek(vertex_shader_file, 0, SEEK_END);
         length = (int) ftell(vertex_shader_file);
@@ -189,7 +191,7 @@ void add_shaders() {
 
     // Load fragment shader from file
     char *fragment_shader_source;
-    FILE *fragment_shader_file = fopen(ASTEROID_FRAGMENT_SHADER_PATH, "rb");
+    FILE *fragment_shader_file = fopen(fragment_shader_path, "rb");
     if (fragment_shader_file) {
         fseek (fragment_shader_file, 0, SEEK_END);
         length = (int) ftell(fragment_shader_file);
@@ -215,76 +217,24 @@ void add_shaders() {
     }
 
     // Link shader program
-    asteroid_shader_program = glCreateProgram();
-    glAttachShader(asteroid_shader_program, vertex_shader);
-    glAttachShader(asteroid_shader_program, fragment_shader);
-    glLinkProgram(asteroid_shader_program);
+    *shader_program_ptr = glCreateProgram();
+    glAttachShader(*shader_program_ptr, vertex_shader);
+    glAttachShader(*shader_program_ptr, fragment_shader);
+    glLinkProgram(*shader_program_ptr);
 
     if (!success) {
-        glGetProgramInfoLog(asteroid_shader_program, 512, NULL, info_log);
+        glGetProgramInfoLog(*shader_program_ptr, 512, NULL, info_log);
         fprintf(stderr,"Shader program error: %s\n", info_log);
     }
+}
 
-    // Read vertex shader from file
-    vertex_shader_file = fopen(BULLET_VERTEX_SHADER_PATH, "rb");
-    if (vertex_shader_file) {
-        fseek(vertex_shader_file, 0, SEEK_END);
-        length = (int) ftell(vertex_shader_file);
-        fseek (vertex_shader_file, 0, SEEK_SET);
-        vertex_shader_source = malloc (length);
-        fread(vertex_shader_source, 1, length, vertex_shader_file);
-        fclose(vertex_shader_file);
-    } else {
-        fprintf(stderr, "Could not open vertex shader file\n");
-        exit(1);
-    }
-    vertex_shader_content = vertex_shader_source;
-
-    // Compile vertex shader
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, &vertex_shader_content, &length);
-    glCompileShader(vertex_shader);
-    glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(vertex_shader, 512, NULL, info_log);
-        fprintf(stderr,"Vertex shader compilation error: %s\n", info_log);
-    }
-
-    // Load fragment shader from file
-    fragment_shader_file = fopen(BULLET_FRAGMENT_SHADER_PATH, "rb");
-    if (fragment_shader_file) {
-        fseek (fragment_shader_file, 0, SEEK_END);
-        length = (int) ftell(fragment_shader_file);
-        fseek (fragment_shader_file, 0, SEEK_SET);
-        fragment_shader_source = malloc(length);
-        fread(fragment_shader_source, 1, length, vertex_shader_file);
-        fclose(fragment_shader_file);
-    } else {
-        fprintf(stderr, "Could not open fragment shader file\n");
-        exit(10);
-    }
-    fragment_shader_content = fragment_shader_source;
-
-    // Compile fragment_shader
-    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, &fragment_shader_content, &length);
-    glCompileShader(fragment_shader);
-    glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(fragment_shader, 512, NULL, info_log);
-        fprintf(stderr,"Fragment shader compilation error: %s\n", info_log);
-    }
-
-    // Link shader program
-    bullet_shader_program = glCreateProgram();
-    glAttachShader(bullet_shader_program, vertex_shader);
-    glAttachShader(bullet_shader_program, fragment_shader);
-    glLinkProgram(bullet_shader_program);
-
-    if (!success) {
-        glGetProgramInfoLog(bullet_shader_program, 512, NULL, info_log);
-        fprintf(stderr,"Shader program error: %s\n", info_log);
-    }
+void add_shaders() {
+    add_shader_program(ASTEROID_VERTEX_SHADER_PATH,
+                       ASTEROID_FRAGMENT_SHADER_PATH,
+                       &asteroid_shader_program);
+    add_shader_program(BULLET_VERTEX_SHADER_PATH,
+                       BULLET_FRAGMENT_SHADER_PATH,
+                       &bullet_shader_program);
 
     glEnable(GL_DEPTH_TEST);
 }
