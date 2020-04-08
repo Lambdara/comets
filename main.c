@@ -22,10 +22,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 int main(int argc, char *argv[]) {
+    // Create world
     srand(time(0));
-
     world = create_world();
 
+    // Initialize window
     int error = intialize_window(&window);
     if (error)
         return error;
@@ -33,19 +34,19 @@ int main(int argc, char *argv[]) {
 
     // Generate asteroids
     for (int i = 0; i < 20; i++) {
+        // Generate random longitude, colatitude, distance not too close to ship
         float longitude = rand() / (float) RAND_MAX * 3.14159 * 2;
         float colatitude = rand() / (float) RAND_MAX * 3.14159;
         float distance = rand() / (float) RAND_MAX * (max_distance - 750.0f) + 250.0f;
-        world->asteroids = asteroid_list_cons(
-                                       create_asteroid(
-                                                       (vec3) {
-                                                               distance * cos(longitude) * sin(colatitude),
-                                                               distance * sin(longitude) * sin(colatitude),
-                                                               distance * cos(colatitude)
-                                                       },
-                                                       ASTEROID_SIZE,
-                                                       ASTEROID_VARIATION),
-                                       world->asteroids);
+        vec3 spawn_location = { distance * cos(longitude) * sin(colatitude),
+                                distance * sin(longitude) * sin(colatitude),
+                                distance * cos(colatitude) };
+
+        // Generate asteroid and add to world
+        asteroid_t *asteroid = create_asteroid(spawn_location,
+                                               ASTEROID_SIZE,
+                                               ASTEROID_VARIATION);
+        world->asteroids = asteroid_list_cons(asteroid, world->asteroids);
     }
 
     double new_time = 0.0d;
