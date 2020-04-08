@@ -204,18 +204,6 @@ void add_shader_program(char *vertex_shader_path,
     glLinkProgram(*shader_program_ptr);
 }
 
-void add_shaders() {
-    add_shader_program(ASTEROID_VERTEX_SHADER_PATH,
-                       ASTEROID_FRAGMENT_SHADER_PATH,
-                       &asteroid_shader_program);
-    add_shader_program(BULLET_VERTEX_SHADER_PATH,
-                       BULLET_FRAGMENT_SHADER_PATH,
-                       &bullet_shader_program);
-
-    glEnable(GL_DEPTH_TEST);
-}
-
-
 void resize_framebuffer(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
@@ -245,8 +233,14 @@ int intialize_window(GLFWwindow **window) {
     }
 
     glEnable(GL_MULTISAMPLE);
+    glEnable(GL_DEPTH_TEST);
 
-    add_shaders();
+    add_shader_program(ASTEROID_VERTEX_SHADER_PATH,
+                       ASTEROID_FRAGMENT_SHADER_PATH,
+                       &asteroid_shader_program);
+    add_shader_program(BULLET_VERTEX_SHADER_PATH,
+                       BULLET_FRAGMENT_SHADER_PATH,
+                       &bullet_shader_program);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
