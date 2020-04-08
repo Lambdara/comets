@@ -155,77 +155,53 @@ void render(GLFWwindow *window, world_t *world) {
     glDeleteBuffers(1, &nbo);
 }
 
-void add_shader_program(char *vertex_shader_path,
-                        char *fragment_shader_path,
-                        unsigned int *shader_program_ptr) {
+unsigned int compile_shader(char *shader_path, int shader_type) {
     int length;
 
-    // Read vertex shader from file
-    char *vertex_shader_source;
-    FILE *vertex_shader_file = fopen(vertex_shader_path, "rb");
-    if (vertex_shader_file) {
-        fseek(vertex_shader_file, 0, SEEK_END);
-        length = (int) ftell(vertex_shader_file);
-        fseek (vertex_shader_file, 0, SEEK_SET);
-        vertex_shader_source = malloc (length);
-        fread(vertex_shader_source, 1, length, vertex_shader_file);
-        fclose(vertex_shader_file);
+    // Read shader from file
+    char *shader_source;
+    FILE *shader_file = fopen(shader_path, "rb");
+    if (shader_file) {
+        fseek(shader_file, 0, SEEK_END);
+        length = (int) ftell(shader_file);
+        fseek (shader_file, 0, SEEK_SET);
+        shader_source = malloc (length);
+        fread(shader_source, 1, length, shader_file);
+        fclose(shader_file);
     } else {
         fprintf(stderr, "Could not open vertex shader file\n");
         exit(1);
     }
-    const char *vertex_shader_content = vertex_shader_source;
+    const char *shader_content = shader_source;
 
-    // Compile vertex shader
-    unsigned int vertex_shader;
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, &vertex_shader_content, &length);
-    glCompileShader(vertex_shader);
+    // Compile shader
+    unsigned int shader;
+    shader = glCreateShader(shader_type);
+    glShaderSource(shader, 1, &shader_content, &length);
+    glCompileShader(shader);
     int  success;
     char info_log[512];
-    glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(vertex_shader, 512, NULL, info_log);
+        glGetShaderInfoLog(shader, 512, NULL, info_log);
         fprintf(stderr,"Vertex shader compilation error: %s\n", info_log);
     }
+    return shader;
+}
 
-    // Load fragment shader from file
-    char *fragment_shader_source;
-    FILE *fragment_shader_file = fopen(fragment_shader_path, "rb");
-    if (fragment_shader_file) {
-        fseek (fragment_shader_file, 0, SEEK_END);
-        length = (int) ftell(fragment_shader_file);
-        fseek (fragment_shader_file, 0, SEEK_SET);
-        fragment_shader_source = malloc(length);
-        fread(fragment_shader_source, 1, length, vertex_shader_file);
-        fclose(fragment_shader_file);
-    } else {
-        fprintf(stderr, "Could not open fragment shader file\n");
-        exit(10);
-    }
-    const char *fragment_shader_content = fragment_shader_source;
-
-    // Compile fragment_shader
-    unsigned int fragment_shader;
-    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, &fragment_shader_content, &length);
-    glCompileShader(fragment_shader);
-    glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(fragment_shader, 512, NULL, info_log);
-        fprintf(stderr,"Fragment shader compilation error: %s\n", info_log);
-    }
+void add_shader_program(char *vertex_shader_path,
+                        char *fragment_shader_path,
+                        unsigned int *shader_program_ptr) {
+    unsigned int vertex_shader = compile_shader(vertex_shader_path,
+                                                GL_VERTEX_SHADER);
+    unsigned int fragment_shader = compile_shader(fragment_shader_path,
+                                                  GL_FRAGMENT_SHADER);
 
     // Link shader program
     *shader_program_ptr = glCreateProgram();
     glAttachShader(*shader_program_ptr, vertex_shader);
     glAttachShader(*shader_program_ptr, fragment_shader);
     glLinkProgram(*shader_program_ptr);
-
-    if (!success) {
-        glGetProgramInfoLog(*shader_program_ptr, 512, NULL, info_log);
-        fprintf(stderr,"Shader program error: %s\n", info_log);
-    }
 }
 
 void add_shaders() {
