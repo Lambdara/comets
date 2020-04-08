@@ -192,6 +192,7 @@ unsigned int compile_shader(char *shader_path, int shader_type) {
 void add_shader_program(char *vertex_shader_path,
                         char *fragment_shader_path,
                         unsigned int *shader_program_ptr) {
+    // Compile shaders
     unsigned int vertex_shader = compile_shader(vertex_shader_path,
                                                 GL_VERTEX_SHADER);
     unsigned int fragment_shader = compile_shader(fragment_shader_path,
