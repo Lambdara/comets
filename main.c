@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     glfwSetKeyCallback(window, key_callback);
 
     // Generate asteroids
-    for (int i = 0; i < 250; i++) {
+    for (int i = 0; i < 20; i++) {
         float longitude = rand() / (float) RAND_MAX * 3.14159 * 2;
         float colatitude = rand() / (float) RAND_MAX * 3.14159;
         float distance = rand() / (float) RAND_MAX * (max_distance - 750.0f) + 250.0f;
@@ -173,9 +173,8 @@ int main(int argc, char *argv[]) {
                                                 ASTEROID_SIZE,
                                                 ASTEROID_VARIATION),
                                 world->asteroids);
-                            world->asteroids->this->speed += (float) world->score*1000;
+                            world->asteroids->this->speed += sqrt((float) world->score)*250;
                         }
-
                         break;
                     } else
                         bullets_link = &(bullets_head->next);
