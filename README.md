@@ -10,13 +10,13 @@ Comets is an attempt at making a 3D game based on the 2D game 'Asteroids'.
 
 ## Plan:
 It's working decently well now, but these are some possible points of improvement:
+- Add realistic lighting to dust particles
 - More precise ship-asteroid collision check
 - Implement a proper sun (visual only, should be drawn out of accessible map)
 - Implement newtonian movement (turning doesn't change direction of movement, just of acceleration)
 - Add skybox
 - Add local score saving
-- Add shadows
-- Add "dust" particles, the visibility of which is determined by shadows, giving a reverse sunbeam effect left by asteroids
+- Add shadows, especially from asteroids to dust
 
 ## Libraries
 
