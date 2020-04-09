@@ -5,7 +5,7 @@
 
 #define ASTEROID_SIZE 24.0f
 #define ASTEROID_VARIATION 12.0f
-#define MINIMUM_COLLISION_DISTANCE 24.0f
+#define MINIMUM_COLLISION_DISTANCE 36.0f
 
 GLFWwindow *window;
 world_t *world;
@@ -13,7 +13,7 @@ float max_distance = 1000.0f;
 
 void move_objects(float delta){
     // Handle rotations
-        asteroid_list_t *asteroids_head = world->asteroids;
+    asteroid_list_t *asteroids_head = world->asteroids;
     while (asteroids_head->next != NULL){
         asteroids_head->this->angle += asteroids_head->this->rotation_speed * delta;
         asteroids_head = asteroids_head->next;
@@ -55,16 +55,19 @@ void move_objects(float delta){
 }
 
 void process_collisions(float delta) {
+    // Asteroid-bullet intersections
+    // Iterate over asteroids
     asteroid_list_t *asteroids_head = world->asteroids;
     asteroid_list_t **asteroids_link = &(world->asteroids);
-
     while(asteroids_head->next != NULL) {
         asteroid_t *asteroid = asteroids_head->this;
         int asteroid_destroyed = 0;
 
+        // Iterate over the asteroid's triangles
         for (int i = 0; i < asteroid->vertices_length / 3; i++) {
             vec3 origin, direction, v0, v1, v2;
 
+            // Set v0,v1,v2 to triangle vertices in world space
             glm_vec3_copy(asteroid->vertices[i*3], v0);
             glm_vec3_copy(asteroid->vertices[i*3+1], v1);
             glm_vec3_copy(asteroid->vertices[i*3+2], v2);
@@ -77,6 +80,7 @@ void process_collisions(float delta) {
             glm_vec3_add(v1, asteroid->location, v1);
             glm_vec3_add(v2, asteroid->location, v2);
 
+            // Iterate over bullets
             bullet_list_t *bullets_head = world->bullets;
             bullet_list_t **bullets_link = &(world->bullets);
             while(bullets_head->next != NULL) {
@@ -88,20 +92,22 @@ void process_collisions(float delta) {
                 float distance;
                 bool intersection;
 
+                // Simple but inexact check for collision, only false positives
                 if (glm_vec3_distance(asteroid->location, bullet->location) > (bullet->speed + asteroid->speed)*delta + MINIMUM_COLLISION_DISTANCE*asteroid->size)
-                    intersection = 0;
+                    intersection = false;
                 else
                     intersection = glm_ray_triangle(origin, direction, v0, v1, v2, &distance);
 
+                // Exact collision check
                 if (intersection && distance <= glm_vec3_distance(bullet->vertices[0], bullet->vertices[1]) + bullet->speed*delta) {
-                    // Warning: Memory leak
+                    // Warning: Memory leak; Removes asteroid and bullet
                     *asteroids_link = asteroids_head->next;
                     asteroid_destroyed = 1;
                     *bullets_link = bullets_head->next;
                     i = asteroid->vertices_length;
 
+                    // If asteroid was big enough, split it into two
                     float size = asteroid->size;
-                    // Create world->asteroids
                     if (size > 0.24f){
                         world->score++;
                         size /= 2.0f;
@@ -138,6 +144,7 @@ void process_collisions(float delta) {
         asteroids_head = asteroids_head->next;
     }
 
+    // Simple but inaccurate asteroid-ship collision check
     asteroids_head = world->asteroids;
     while(asteroids_head->next != NULL) {
         asteroid_t *asteroid = asteroids_head->this;

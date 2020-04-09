@@ -54,15 +54,10 @@ typedef struct {
     bool running;
 } world_t;
 
-vec3 camera_location;
-float camera_angle;
-
 world_t *create_world();
 
 asteroid_t *create_asteroid(vec3, float, float);
-
 asteroid_list_t *create_asteroid_list();
-
 asteroid_list_t *asteroid_list_cons(asteroid_t*, asteroid_list_t*);
 
 bullet_t *create_bullet(vec3, vec3, float);

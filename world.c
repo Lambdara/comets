@@ -12,6 +12,7 @@ world_t *create_world() {
 }
 
 void make_normal(vec3 a, vec3 b, vec3 c, vec3 n) {
+    // Given vertices of triangle, creates normal that points away from origin
     vec3 v, w;
     glm_vec3_sub(c, a, v);
     glm_vec3_sub(c, b, w);
