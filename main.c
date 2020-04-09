@@ -9,7 +9,6 @@
 
 GLFWwindow *window;
 world_t *world;
-float max_distance = 1000.0f;
 
 void move_objects(float delta){
     // Handle rotations
@@ -51,6 +50,14 @@ void move_objects(float delta){
         }
 
         asteroids_head = asteroids_head->next;
+    }
+
+    // Move dust
+    for (int i = 0; i < world->dust_cloud->vertices_length; i++){
+        glm_vec3_add(world->dust_cloud->vertices[i], ship_diff, world->dust_cloud->vertices[i]);
+        if (glm_vec3_norm(world->dust_cloud->vertices[i]) > max_distance) {
+            glm_vec3_negate(world->dust_cloud->vertices[i]);
+        }
     }
 }
 
@@ -165,22 +172,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 int main(int argc, char *argv[]) {
-    // Create world
-    srand(time(0));
-    world = create_world();
-
     // Initialize window
     int error = intialize_window(&window);
     if (error)
         return error;
     glfwSetKeyCallback(window, key_callback);
 
+    // Create world
+    srand(time(0));
+    world = create_world();
+
     // Generate asteroids
     for (int i = 0; i < 20; i++) {
         // Generate random longitude, colatitude, distance not too close to ship
         float longitude = rand() / (float) RAND_MAX * 3.14159 * 2;
         float colatitude = rand() / (float) RAND_MAX * 3.14159;
-        float distance = rand() / (float) RAND_MAX * (max_distance - 750.0f) + 250.0f;
+        float distance = sqrt(rand() / (float) RAND_MAX) * (max_distance - 750.0f) + 250.0f;
         vec3 spawn_location = { distance * cos(longitude) * sin(colatitude),
                                 distance * sin(longitude) * sin(colatitude),
                                 distance * cos(colatitude) };

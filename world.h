@@ -7,6 +7,8 @@
 #include <GL/glew.h>
 #include <cglm/cglm.h>
 
+#define max_distance 1000.0f
+
 typedef struct {
     int vertices_length;
     vec3 *vertices;
@@ -36,6 +38,11 @@ typedef struct {
     float speed;
 } ship_t;
 
+typedef struct {
+    int vertices_length;
+    vec3 *vertices;
+} dust_cloud_t;
+
 typedef struct asteroid_list_t {
     asteroid_t *this;
     struct asteroid_list_t *next;
@@ -48,6 +55,7 @@ typedef struct bullet_list_t {
 
 typedef struct {
     asteroid_list_t *asteroids;
+    dust_cloud_t *dust_cloud;
     bullet_list_t *bullets;
     ship_t *ship;
     int score;
@@ -55,6 +63,8 @@ typedef struct {
 } world_t;
 
 world_t *create_world();
+
+dust_cloud_t *create_dust_cloud();
 
 asteroid_t *create_asteroid(vec3, float, float);
 asteroid_list_t *create_asteroid_list();

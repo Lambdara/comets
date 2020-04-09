@@ -3,12 +3,31 @@
 world_t *create_world() {
     world_t *world = malloc(sizeof(world_t));
     world->asteroids = create_asteroid_list();
+    world->dust_cloud = create_dust_cloud();
     world->bullets = create_bullet_list();
     world->ship = create_ship((vec3) {0.0f, 0.0f, -1.0f});
     world->score = 0;
     world->running = true;
 
     return world;
+}
+
+dust_cloud_t *create_dust_cloud() {
+    dust_cloud_t *dust_cloud = malloc(sizeof(dust_cloud_t));
+    dust_cloud->vertices_length = 25000;
+    dust_cloud->vertices = malloc(sizeof(vec3)*dust_cloud->vertices_length);
+
+    for (int i = 0; i < dust_cloud->vertices_length; i++) {
+        float longitude = rand() / (float) RAND_MAX * 3.14159 * 2;
+        float colatitude = rand() / (float) RAND_MAX * 3.14159;
+        float distance = cbrt(rand() / (float) RAND_MAX) * max_distance;
+        vec3 spawn_location = { distance * cos(longitude) * sin(colatitude),
+                                distance * sin(longitude) * sin(colatitude),
+                                distance * cos(colatitude) };
+        glm_vec3_copy(spawn_location, dust_cloud->vertices[i]);
+    }
+
+    return dust_cloud;
 }
 
 void make_normal(vec3 a, vec3 b, vec3 c, vec3 n) {

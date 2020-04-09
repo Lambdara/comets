@@ -1,6 +1,6 @@
 #include "graphics.h"
 
-unsigned int asteroid_shader_program, bullet_shader_program;
+unsigned int asteroid_shader_program, bullet_shader_program, dust_shader_program;
 
 void asteroid_model_matrix (asteroid_t* asteroid, mat4 matrix) {
     glm_mat4_identity(matrix);
@@ -117,6 +117,9 @@ void render(GLFWwindow *window, world_t *world) {
     view_matrix_loc = glGetUniformLocation(bullet_shader_program, "view_matrix");
     projection_matrix_loc = glGetUniformLocation(bullet_shader_program, "projection_matrix");
 
+    glUniformMatrix4fv(view_matrix_loc, 1, GL_FALSE, view_matrix[0]);
+    glUniformMatrix4fv(projection_matrix_loc, 1, GL_FALSE, projection_matrix[0]);
+
     bullet_list_t *bullets_head = bullets;
     while(bullets_head->next != NULL) {
         bullet_t *bullet = bullets_head->this;
@@ -128,12 +131,22 @@ void render(GLFWwindow *window, world_t *world) {
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
         glUniformMatrix4fv(model_matrix_loc, 1, GL_FALSE, model_matrix[0]);
-        glUniformMatrix4fv(view_matrix_loc, 1, GL_FALSE, view_matrix[0]);
-        glUniformMatrix4fv(projection_matrix_loc, 1, GL_FALSE, projection_matrix[0]);
         glDrawArrays(GL_LINES, 0, 2);
 
         bullets_head = bullets_head->next;
     }
+
+    // Draw dust
+    glUseProgram(dust_shader_program);
+    view_matrix_loc = glGetUniformLocation(dust_shader_program, "view_matrix");
+    projection_matrix_loc = glGetUniformLocation(dust_shader_program, "projection_matrix");
+    glUniformMatrix4fv(view_matrix_loc, 1, GL_FALSE, view_matrix[0]);
+    glUniformMatrix4fv(projection_matrix_loc, 1, GL_FALSE, projection_matrix[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*world->dust_cloud->vertices_length, world->dust_cloud->vertices, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glDrawArrays(GL_POINTS, 0, world->dust_cloud->vertices_length);
+
 
     glDisableVertexAttribArray(0);
 
@@ -245,6 +258,9 @@ int intialize_window(GLFWwindow **window) {
     add_shader_program(BULLET_VERTEX_SHADER_PATH,
                        BULLET_FRAGMENT_SHADER_PATH,
                        &bullet_shader_program);
+    add_shader_program(DUST_VERTEX_SHADER_PATH,
+                       DUST_FRAGMENT_SHADER_PATH,
+                       &dust_shader_program);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
