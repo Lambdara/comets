@@ -1,6 +1,6 @@
 #include "graphics.h"
 
-unsigned int asteroid_shader_program, bullet_shader_program, dust_shader_program;
+unsigned int asteroid_shader_program, bullet_shader_program, dust_shader_program, crosshair_shader_program;
 
 void asteroid_model_matrix (asteroid_t* asteroid, mat4 matrix) {
     glm_mat4_identity(matrix);
@@ -147,6 +147,16 @@ void render(GLFWwindow *window, world_t *world) {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_POINTS, 0, world->dust_cloud->vertices_length);
 
+    // Draw crosshair
+    glUseProgram(crosshair_shader_program);
+    vec3 crosshair_vertices[4] = {{0.025f, 0.0f, 0.0f},
+                                  {-0.025f, 0.0f, 0.0f},
+                                  {0.0f, 0.025f, 0.0f},
+                                  {0.0f, -0.025f, 0.0f}};
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*4, crosshair_vertices, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glDrawArrays(GL_LINES, 0, 4);
 
     glDisableVertexAttribArray(0);
 
@@ -261,6 +271,9 @@ int intialize_window(GLFWwindow **window) {
     add_shader_program(DUST_VERTEX_SHADER_PATH,
                        DUST_FRAGMENT_SHADER_PATH,
                        &dust_shader_program);
+    add_shader_program(CROSSHAIR_VERTEX_SHADER_PATH,
+                       CROSSHAIR_FRAGMENT_SHADER_PATH,
+                       &crosshair_shader_program);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
