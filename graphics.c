@@ -13,18 +13,29 @@ void bullet_model_matrix(bullet_t* bullet, mat4 matrix) {
     glm_translate(matrix, bullet->location);
 }
 
-void render(GLFWwindow *window, world_t *world) {
+void render_objects_with_shadow(world_t *world, mat4 view_matrix, mat4 projection_matrix) {
     // Set some world members to local variables for easier access
     asteroid_list_t* asteroids = world->asteroids;
-    bullet_list_t *bullets = world->bullets;
     ship_t *ship = world->ship;
-    int score = world->score;
     bool running = world->running;
 
-    // Ship model and view direction
-    vec3 eye_dir;
-    mat4 view_matrix;
-    mat4 projection_matrix;
+    GLuint vbo;
+    GLuint nbo;
+    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &nbo);
+
+    glUseProgram(asteroid_shader_program);
+
+    unsigned int model_matrix_loc = glGetUniformLocation(asteroid_shader_program, "model_matrix");
+    unsigned int view_matrix_loc = glGetUniformLocation(asteroid_shader_program, "view_matrix");
+    unsigned int projection_matrix_loc = glGetUniformLocation(asteroid_shader_program, "projection_matrix");
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+
+    glUniformMatrix4fv(view_matrix_loc, 1, GL_FALSE, view_matrix[0]);
+    glUniformMatrix4fv(projection_matrix_loc, 1, GL_FALSE, projection_matrix[0]);
+
     mat4 model_matrix;
     glm_mat4_identity(model_matrix);
 
@@ -43,37 +54,6 @@ void render(GLFWwindow *window, world_t *world) {
         angle *= -1;
     glm_rotate(model_matrix, angle, (vec3) {0.0f, -1.0f, 0.0f});
 
-    // Set view direction to ship direction
-    glm_vec3_copy(ship->pointing_direction, eye_dir);
-
-    // Set camera to behind and above ship
-    vec3 eye;
-    vec3 up = {0.0f, 1.0f, 0.0f};
-    glm_vec3_scale(ship->pointing_direction, -16.0f, eye);
-    eye[1] += 8.0f;
-    glm_look(eye, eye_dir, up, view_matrix);
-
-    // Perspective matrix
-    glm_perspective(3.14159265358979323f/2.0f, 16.0f/9.0f, 1.0f, 100000.0f, projection_matrix);
-
-    GLuint vbo;
-    GLuint nbo;
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &nbo);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glUseProgram(asteroid_shader_program);
-
-    unsigned int model_matrix_loc = glGetUniformLocation(asteroid_shader_program, "model_matrix");
-    unsigned int view_matrix_loc = glGetUniformLocation(asteroid_shader_program, "view_matrix");
-    unsigned int projection_matrix_loc = glGetUniformLocation(asteroid_shader_program, "projection_matrix");
-
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-
-    glUniformMatrix4fv(view_matrix_loc, 1, GL_FALSE, view_matrix[0]);
-    glUniformMatrix4fv(projection_matrix_loc, 1, GL_FALSE, projection_matrix[0]);
 
     if (running) {
         // Draw ship
@@ -107,18 +87,34 @@ void render(GLFWwindow *window, world_t *world) {
 
         asteroids_head = asteroids_head->next;
     }
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &nbo);
+}
+
+void render_objects_without_shadow(world_t *world, mat4 view_matrix, mat4 projection_matrix) {
+    // Set some world members to local variables for easier access
+    bullet_list_t *bullets = world->bullets;
+    int score = world->score;
+    bool running = world->running;
+
+    GLuint vbo;
+    GLuint nbo;
+    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &nbo);
 
     // Draw bullets
     glDisableVertexAttribArray(1);
 
     glUseProgram(bullet_shader_program);
 
-    model_matrix_loc = glGetUniformLocation(bullet_shader_program, "model_matrix");
-    view_matrix_loc = glGetUniformLocation(bullet_shader_program, "view_matrix");
-    projection_matrix_loc = glGetUniformLocation(bullet_shader_program, "projection_matrix");
+    unsigned int model_matrix_loc = glGetUniformLocation(bullet_shader_program, "model_matrix");
+    unsigned int view_matrix_loc = glGetUniformLocation(bullet_shader_program, "view_matrix");
+    unsigned int projection_matrix_loc = glGetUniformLocation(bullet_shader_program, "projection_matrix");
 
     glUniformMatrix4fv(view_matrix_loc, 1, GL_FALSE, view_matrix[0]);
     glUniformMatrix4fv(projection_matrix_loc, 1, GL_FALSE, projection_matrix[0]);
+
+    mat4 model_matrix;
 
     bullet_list_t *bullets_head = bullets;
     while(bullets_head->next != NULL) {
@@ -176,9 +172,43 @@ void render(GLFWwindow *window, world_t *world) {
     gltEndDraw();
     gltTerminate();
 
-    glfwSwapBuffers(window);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &nbo);
+}
+
+void get_ship_perspective(world_t *world, mat4 view_matrix, mat4 projection_matrix) {
+    // Set some world members to local variables for easier access
+    ship_t *ship = world->ship;
+
+    // Ship model and view direction
+    vec3 eye_dir;
+
+    // Set view direction to ship direction
+    glm_vec3_copy(ship->pointing_direction, eye_dir);
+
+    // Set camera to behind and above ship
+    vec3 eye;
+    vec3 up = {0.0f, 1.0f, 0.0f};
+    glm_vec3_scale(ship->pointing_direction, -16.0f, eye);
+    eye[1] += 8.0f;
+    glm_look(eye, eye_dir, up, view_matrix);
+
+    // Perspective matrix
+    glm_perspective(3.14159265358979323f/2.0f, 16.0f/9.0f, 1.0f, 100000.0f, projection_matrix);
+}
+
+void render(GLFWwindow *window, world_t *world) {
+    mat4 view_matrix;
+    mat4 projection_matrix;
+
+    get_ship_perspective(world, view_matrix, projection_matrix);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    render_objects_with_shadow(world, view_matrix, projection_matrix);
+    render_objects_without_shadow(world, view_matrix, projection_matrix);
+
+    glfwSwapBuffers(window);
 }
 
 unsigned int compile_shader(char *shader_path, int shader_type) {
