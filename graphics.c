@@ -2,6 +2,12 @@
 
 unsigned int asteroid_shader_program, bullet_shader_program, dust_shader_program, crosshair_shader_program;
 
+unsigned int depth_map_fbo;
+const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+unsigned int depth_map;
+
+int screen_width, screen_height;
+
 void asteroid_model_matrix (asteroid_t* asteroid, mat4 matrix) {
     glm_mat4_identity(matrix);
     glm_translate(matrix, asteroid->location);
@@ -197,14 +203,61 @@ void get_ship_perspective(world_t *world, mat4 view_matrix, mat4 projection_matr
     glm_perspective(3.14159265358979323f/2.0f, 16.0f/9.0f, 1.0f, 100000.0f, projection_matrix);
 }
 
+void get_sun_perspective(world_t *world, mat4 view_matrix, mat4 projection_matrix) {
+    vec3 eye = {100000.0, 25000.0, 0.0};
+    vec3 eye_dir;
+    glm_vec3_scale(eye, -1.0f, eye_dir);
+    glm_vec3_normalize(eye_dir);
+    vec3 up = {0.0f, 1.0f, 0.0f};
+    glm_look(eye, eye_dir, up, view_matrix);
+
+    // Perspective matrix
+    glm_perspective(3.14159265358979323f/128.0f, 1.0f, 1000.0f, 250000.0f, projection_matrix);
+}
+
+
+void setup_shadows() {
+    glGenFramebuffers(1, &depth_map_fbo);
+    glGenTextures(1, &depth_map);
+    glBindTexture(GL_TEXTURE_2D, depth_map);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_DEPTH_COMPONENT,
+                 SHADOW_WIDTH,
+                 SHADOW_HEIGHT,
+                 0,
+                 GL_DEPTH_COMPONENT,
+                 GL_FLOAT,
+                 NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void render(GLFWwindow *window, world_t *world) {
     mat4 view_matrix;
     mat4 projection_matrix;
 
-    get_ship_perspective(world, view_matrix, projection_matrix);
+    // Compute shadows
+    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+    glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    get_sun_perspective(world, view_matrix, projection_matrix);
+    render_objects_with_shadow(world, view_matrix, projection_matrix);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    // Render scene
+    glViewport(0, 0, screen_width, screen_height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    get_ship_perspective(world, view_matrix, projection_matrix);
+    glBindTexture(GL_TEXTURE_2D, depth_map);
     render_objects_with_shadow(world, view_matrix, projection_matrix);
     render_objects_without_shadow(world, view_matrix, projection_matrix);
 
@@ -262,7 +315,8 @@ void add_shader_program(char *vertex_shader_path,
 }
 
 void resize_framebuffer(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
+    screen_width = width;
+    screen_height = height;
 }
 
 int intialize_window(GLFWwindow **window) {
@@ -306,6 +360,8 @@ int intialize_window(GLFWwindow **window) {
                        &crosshair_shader_program);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+    setup_shadows();
 
     return 0;
 }
