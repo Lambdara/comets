@@ -212,8 +212,8 @@ bullet_list_t *bullet_list_cons(bullet_t* bullet, bullet_list_t* bullets) {
 ship_t *create_ship(vec3 direction) {
     ship_t *ship = malloc(sizeof(ship_t));
 
-    glm_vec3_copy(direction, ship->direction);
-    ship->speed = 0.0f;
+    glm_vec3_copy(GLM_VEC3_ZERO, ship->movement_direction);
+    glm_vec3_copy(direction, ship->pointing_direction);
 
     vec3 vertices[5] = {{0.0f, 0.0f, -2.0f}, // front       0
                         {-1.0f, 0.0f, 1.0f}, // back, left  1

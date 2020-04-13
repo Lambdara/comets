@@ -19,7 +19,7 @@ void move_objects(float delta){
     }
 
     vec3 ship_diff;
-    glm_vec3_scale(world->ship->direction, -world->ship->speed*delta, ship_diff);
+    glm_vec3_scale(world->ship->movement_direction, -delta, ship_diff);
 
     // Move world->bullets
     bullet_list_t *bullets_head = world->bullets;
@@ -157,7 +157,7 @@ void process_collisions(float delta) {
         asteroid_t *asteroid = asteroids_head->this;
         if(glm_vec3_norm(asteroid->location) < MINIMUM_COLLISION_DISTANCE*asteroid->size) {
             world->running = false;
-            world->ship->speed = 0.0f;
+            glm_vec3_copy(GLM_VEC3_ZERO, world->ship->movement_direction);
         }
         asteroids_head = asteroids_head->next;
     }
@@ -166,7 +166,7 @@ void process_collisions(float delta) {
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_T && action == GLFW_PRESS){
-        bullet_t *bullet = create_bullet((vec3) {0.0f, 0.0f, 0.0f}, world->ship->direction, 700.0+world->ship->speed);
+        bullet_t *bullet = create_bullet((vec3) {0.0f, 0.0f, 0.0f}, world->ship->pointing_direction, 700.0+glm_vec3_norm(world->ship->pointing_direction));
         world->bullets = bullet_list_cons(bullet, world->bullets);
     }
 }
@@ -216,26 +216,30 @@ int main(int argc, char *argv[]) {
         // Handle keyboard input
         if (world->running) {
             if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-                world->ship->speed += delta * 120.0f;
+                vec3 speed_diff;
+                glm_vec3_scale(world->ship->pointing_direction, delta * 120.0f, speed_diff);
+                glm_vec3_add(world->ship->movement_direction, speed_diff, world->ship->movement_direction);
             }
             if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-                world->ship->speed -= delta * 120.0f;
+                vec3 speed_diff;
+                glm_vec3_scale(world->ship->pointing_direction, -delta * 120.0f, speed_diff);
+                glm_vec3_add(world->ship->movement_direction, speed_diff, world->ship->movement_direction);
             }
             if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-                glm_vec3_rotate(world->ship->direction, -delta, (vec3) {0.0f, 1.0f, 0.0f});
+                glm_vec3_rotate(world->ship->pointing_direction, -delta, (vec3) {0.0f, 1.0f, 0.0f});
             }
             if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-                glm_vec3_rotate(world->ship->direction, delta, (vec3) {0.0f, 1.0f, 0.0f});
+                glm_vec3_rotate(world->ship->pointing_direction, delta, (vec3) {0.0f, 1.0f, 0.0f});
             }
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
                 vec3 axis;
-                glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, world->ship->direction, axis);
-                glm_vec3_rotate(world->ship->direction, -delta, axis);
+                glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, world->ship->pointing_direction, axis);
+                glm_vec3_rotate(world->ship->pointing_direction, -delta, axis);
             }
             if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
                 vec3 axis;
-                glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, world->ship->direction, axis);
-                glm_vec3_rotate(world->ship->direction, delta, axis);
+                glm_vec3_cross((vec3) {0.0f, 1.0f, 0.0f}, world->ship->pointing_direction, axis);
+                glm_vec3_rotate(world->ship->pointing_direction, delta, axis);
             }
         }
 

@@ -34,8 +34,8 @@ typedef struct {
 typedef struct {
     vec3* vertices;
     vec3* normals;
-    vec3 direction;
-    float speed;
+    vec3 pointing_direction;
+    vec3 movement_direction;
 } ship_t;
 
 typedef struct {

@@ -31,25 +31,25 @@ void render(GLFWwindow *window, world_t *world) {
     // Rotate ship in xz-plane
     float angle;
     vec3 axis;
-    glm_vec3_cross(ship->direction, (vec3) {0.0f, 1.0f, 0.0f}, axis);
-    angle = glm_vec3_angle(ship->direction, (vec3) {ship->direction[0], 0.0f, ship->direction[2]});
-    if (ship->direction[1] < 0.0f)
+    glm_vec3_cross(ship->pointing_direction, (vec3) {0.0f, 1.0f, 0.0f}, axis);
+    angle = glm_vec3_angle(ship->pointing_direction, (vec3) {ship->pointing_direction[0], 0.0f, ship->pointing_direction[2]});
+    if (ship->pointing_direction[1] < 0.0f)
         angle *= -1;
     glm_rotate(model_matrix, angle, axis);
 
     // Rotate ship y-component
-    angle = glm_vec3_angle((vec3) {ship->direction[0], 0.0f, ship->direction[2]}, (vec3) {0.0f, 0.0f, -1.0f});
-    if (ship->direction[0] < 0.0f)
+    angle = glm_vec3_angle((vec3) {ship->pointing_direction[0], 0.0f, ship->pointing_direction[2]}, (vec3) {0.0f, 0.0f, -1.0f});
+    if (ship->pointing_direction[0] < 0.0f)
         angle *= -1;
     glm_rotate(model_matrix, angle, (vec3) {0.0f, -1.0f, 0.0f});
 
     // Set view direction to ship direction
-    glm_vec3_copy(ship->direction, eye_dir);
+    glm_vec3_copy(ship->pointing_direction, eye_dir);
 
     // Set camera to behind and above ship
     vec3 eye;
     vec3 up = {0.0f, 1.0f, 0.0f};
-    glm_vec3_scale(ship->direction, -16.0f, eye);
+    glm_vec3_scale(ship->pointing_direction, -16.0f, eye);
     eye[1] += 8.0f;
     glm_look(eye, eye_dir, up, view_matrix);
 

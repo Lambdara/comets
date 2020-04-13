@@ -13,7 +13,6 @@ It's working decently well now, but these are some possible points of improvemen
 - Add realistic lighting to dust particles
 - More precise ship-asteroid collision check
 - Implement a proper sun (visual only, should be drawn out of accessible map)
-- Implement newtonian movement (turning doesn't change direction of movement, just of acceleration)
 - Add skybox
 - Add local score saving
 - Add shadows, especially from asteroids to dust
