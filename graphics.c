@@ -97,6 +97,18 @@ void render_objects_with_shadow(world_t *world, mat4 view_matrix, mat4 projectio
     glDeleteBuffers(1, &nbo);
 }
 
+void get_sun_perspective(world_t *world, mat4 view_matrix, mat4 projection_matrix) {
+    vec3 eye = {100000.0, 25000.0, 0.0};
+    vec3 eye_dir;
+    glm_vec3_scale(eye, -1.0f, eye_dir);
+    glm_vec3_normalize(eye_dir);
+    vec3 up = {0.0f, 1.0f, 0.0f};
+    glm_look(eye, eye_dir, up, view_matrix);
+
+    // Perspective matrix
+    glm_perspective(3.14159265358979323f/128.0f, 1.0f, 1000.0f, 250000.0f, projection_matrix);
+}
+
 void render_objects_without_shadow(world_t *world, mat4 view_matrix, mat4 projection_matrix) {
     // Set some world members to local variables for easier access
     bullet_list_t *bullets = world->bullets;
@@ -142,8 +154,15 @@ void render_objects_without_shadow(world_t *world, mat4 view_matrix, mat4 projec
     glUseProgram(dust_shader_program);
     view_matrix_loc = glGetUniformLocation(dust_shader_program, "view_matrix");
     projection_matrix_loc = glGetUniformLocation(dust_shader_program, "projection_matrix");
+    unsigned int light_matrix_loc = glGetUniformLocation(dust_shader_program, "light_matrix");
+    mat4 light_view, light_projection;
+    get_sun_perspective(world, light_view, light_projection);
+    mat4 light_matrix;
+    glm_mat4_mul(light_projection, light_view, light_matrix);
     glUniformMatrix4fv(view_matrix_loc, 1, GL_FALSE, view_matrix[0]);
     glUniformMatrix4fv(projection_matrix_loc, 1, GL_FALSE, projection_matrix[0]);
+    glUniformMatrix4fv(light_matrix_loc, 1, GL_FALSE, light_matrix[0]);
+    glBindTexture(GL_TEXTURE_2D, depth_map);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*world->dust_cloud->vertices_length, world->dust_cloud->vertices, GL_DYNAMIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -202,19 +221,6 @@ void get_ship_perspective(world_t *world, mat4 view_matrix, mat4 projection_matr
     // Perspective matrix
     glm_perspective(3.14159265358979323f/2.0f, 16.0f/9.0f, 1.0f, 100000.0f, projection_matrix);
 }
-
-void get_sun_perspective(world_t *world, mat4 view_matrix, mat4 projection_matrix) {
-    vec3 eye = {100000.0, 25000.0, 0.0};
-    vec3 eye_dir;
-    glm_vec3_scale(eye, -1.0f, eye_dir);
-    glm_vec3_normalize(eye_dir);
-    vec3 up = {0.0f, 1.0f, 0.0f};
-    glm_look(eye, eye_dir, up, view_matrix);
-
-    // Perspective matrix
-    glm_perspective(3.14159265358979323f/128.0f, 1.0f, 1000.0f, 250000.0f, projection_matrix);
-}
-
 
 void setup_shadows() {
     glGenFramebuffers(1, &depth_map_fbo);
