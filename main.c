@@ -212,6 +212,7 @@ int main(int argc, char *argv[]) {
         // Update world
         move_objects(delta);
         process_collisions(delta);
+        glm_vec3_scale(world->ship->movement_direction, powf(0.75f, delta), world->ship->movement_direction);
 
         // Handle keyboard input
         if (world->running) {
