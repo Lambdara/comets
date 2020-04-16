@@ -166,7 +166,7 @@ void process_collisions(float delta) {
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_T && action == GLFW_PRESS){
-        bullet_t *bullet = create_bullet((vec3) {0.0f, 0.0f, 0.0f}, world->ship->pointing_direction, 700.0+glm_vec3_norm(world->ship->pointing_direction));
+        bullet_t *bullet = create_bullet((vec3) {0.0f, 0.0f, 0.0f}, world->ship->pointing_direction, 700.0+glm_vec3_norm(world->ship->movement_direction));
         world->bullets = bullet_list_cons(bullet, world->bullets);
     }
 }
