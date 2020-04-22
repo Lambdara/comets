@@ -1,14 +1,14 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 #define GLT_IMPLEMENTATION
-#define ASTEROID_VERTEX_SHADER_PATH "src/asteroid_vertices.glsl"
-#define ASTEROID_FRAGMENT_SHADER_PATH "src/asteroid_fragments.glsl"
-#define BULLET_VERTEX_SHADER_PATH "src/bullet_vertices.glsl"
-#define BULLET_FRAGMENT_SHADER_PATH "src/bullet_fragments.glsl"
-#define DUST_VERTEX_SHADER_PATH "src/dust_vertices.glsl"
-#define DUST_FRAGMENT_SHADER_PATH "src/dust_fragments.glsl"
-#define CROSSHAIR_VERTEX_SHADER_PATH "src/crosshair_vertices.glsl"
-#define CROSSHAIR_FRAGMENT_SHADER_PATH "src/crosshair_fragments.glsl"
+#define ASTEROID_VERTEX_SHADER_PATH "src/shaders/asteroid_vertices.glsl"
+#define ASTEROID_FRAGMENT_SHADER_PATH "src/shaders/asteroid_fragments.glsl"
+#define BULLET_VERTEX_SHADER_PATH "src/shaders/bullet_vertices.glsl"
+#define BULLET_FRAGMENT_SHADER_PATH "src/shaders/bullet_fragments.glsl"
+#define DUST_VERTEX_SHADER_PATH "src/shaders/dust_vertices.glsl"
+#define DUST_FRAGMENT_SHADER_PATH "src/shaders/dust_fragments.glsl"
+#define CROSSHAIR_VERTEX_SHADER_PATH "src/shaders/crosshair_vertices.glsl"
+#define CROSSHAIR_FRAGMENT_SHADER_PATH "src/shaders/crosshair_fragments.glsl"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
