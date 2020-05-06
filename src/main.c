@@ -31,10 +31,8 @@ void move_objects(float delta){
         glm_vec3_add(bullets_head->this->location, ship_diff, bullets_head->this->location);
 
         // Yes officer, this memory leak right here!
-        if(glm_vec3_norm(bullets_head->this->location) > max_distance) {
-            free(bullets_head->this);
+        if(glm_vec3_norm(bullets_head->this->location) > max_distance)
             *link = bullets_head->next;
-        }
         else
             link = &(bullets_head->next);
         bullets_head = bullets_head->next;
@@ -109,6 +107,7 @@ void process_collisions(float delta) {
 
                 // Exact collision check
                 if (intersection && distance <= glm_vec3_distance(bullet->vertices[0], bullet->vertices[1]) + bullet->speed*delta) {
+                    // Warning: Memory leak; Removes asteroid and bullet
                     *asteroids_link = asteroids_head->next;
                     asteroid_destroyed = 1;
                     *bullets_link = bullets_head->next;
@@ -141,7 +140,6 @@ void process_collisions(float delta) {
                                                               world->asteroids);
                         world->asteroids->this->speed += sqrt((float) world->score)*250;
                     }
-                    free(asteroid);
                     break;
                 } else
                     bullets_link = &(bullets_head->next);
